@@ -41,7 +41,8 @@ class Pages():
         # self.context.change_page(ContextPages.watch_list)
 
     def _process_command(self, command: str):
-        print("page process command")
+        print("Pages Process Command should be overwrited")
+        assert (False)
         pass
 
     def _unknown_command(self):
