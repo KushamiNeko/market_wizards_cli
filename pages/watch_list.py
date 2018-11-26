@@ -1,5 +1,7 @@
 import helper
 from pages.pages import Pages
+from mongo import MongoInterface
+from context import Context
 from terminal import TerminalColors
 from typing import Dict
 
@@ -8,33 +10,34 @@ from typing import Dict
 
 class WatchList(Pages):
 
-    actions = ["show", "search", "add", "edit", "delete", "goto", "exit"]
+    _actions = ["show", "search", "add", "edit", "delete", "home", "exit"]
 
-    __width = 20
-    __width_large = __width * 3
-    __print_format = ("    " + "{m1: <6}" + "{m2: >{width}}" + "{m3: >{width}}"
-                      + "{m4: >{width}}" + "{m5: >{width}}" + "{m6: >{width}}" +
-                      "{m7: >{note_width}}")
+    _width = 20
+    _width_large = _width * 3
+    _print_format = ("    " + "{m1: <6}" + "{m2: >{width}}" + "{m3: >{width}}" +
+                     "{m4: >{width}}" + "{m5: >{width}}" + "{m6: >{width}}" +
+                     "{m7: >{note_width}}")
 
-    def __init__(self, context, database):
-        super(WatchList, self).__init__(context, database)
+    def __init__(self, context: Context):
+        super(WatchList, self).__init__(context)
 
     def _process_command(self, command: str):
         if command == "show":
-            self.__command_show()
+            self._command_show()
 
-    def __command_show(self):
-        entities = self.database.find("--watch-list--", self.context.uid, {})
+    def _command_show(self):
+        entities = self.context.database.find("--watch-list--",
+                                              self.context.uid, {})
 
         if len(entities) == 0:
             helper.color_print(
                 TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
-                "No Entities Match The Queries\n")
+                "No Entities Match The Queries")
             return
 
         helper.color_print(
             TerminalColors.hex_to_rgb(TerminalColors.paper_light_blue_300),
-            self.__print_format.format(
+            self._print_format.format(
                 m1="Symbol",
                 m2="Price",
                 m3="Status",
@@ -43,15 +46,15 @@ class WatchList(Pages):
                 m6="Fundamentals",
                 m7="Note",
                 # m8="Flag",
-                width=self.__width,
-                note_width=self.__width_large))
+                width=self._width,
+                note_width=self._width_large))
 
         entities.sort(key=lambda entity: self._sort_entity(entity, {}))
 
         for entity in entities:
             helper.color_print(
                 TerminalColors.hex_to_rgb(TerminalColors.paper_blue_grey_100),
-                self.__print_format.format(
+                self._print_format.format(
                     m1=entity["symbol"],
                     m2=entity["price"],
                     m3=entity["status"],
@@ -60,8 +63,8 @@ class WatchList(Pages):
                     m6=entity["fundamentals"],
                     m7=entity["note"],
                     # m8=entity["flag"],
-                    width=self.__width,
-                    note_width=self.__width_large))
+                    width=self._width,
+                    note_width=self._width_large))
 
     def _sort_entity(self, entity: Dict, weights: Dict):
 
