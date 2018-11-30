@@ -11,11 +11,15 @@ class MongoInterface():
     def __init__(self):
         pass
 
+##############################################################################
+
     def find_one(self, database: str, collection: str, queries: Dict) -> Dict:
 
         db = self.client[database]
         collection = db[collection]
         return collection.find_one(queries)
+
+##############################################################################
 
     def find(self, database: str, collection: str, queries: Dict) -> List:
 
@@ -27,6 +31,24 @@ class MongoInterface():
             result.append(x)
 
         return result
+
+##############################################################################
+
+    def delete_one(self, database: str, collection: str, queries: Dict):
+
+        db = self.client[database]
+        collection = db[collection]
+
+        collection.delete_one(queries)
+
+##############################################################################
+
+    def delete(self, database: str, collection: str, queries: Dict):
+
+        db = self.client[database]
+        collection = db[collection]
+
+        collection.delete_many(queries)
 
 
 ##############################################################################

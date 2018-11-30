@@ -14,7 +14,7 @@ import helper
 def _main_loop(context: Context):
 
     PAGES = [
-        "watch_list", "transactions", "new_transactions", "statistic", "exit"
+        "watch list", "transactions", "new transactions", "statistic", "exit"
     ]
 
     while True:
@@ -31,7 +31,7 @@ def _main_loop(context: Context):
         if page == "exit":
             break
 
-        if page == "watch_list":
+        if page == "watch list":
             p = WatchList(context)
             p.main_loop()
 

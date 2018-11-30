@@ -15,6 +15,8 @@ class Pages():
     def __init__(self, context: Context):
         self.context = context
 
+##############################################################################
+
     def main_loop(self):
         while True:
             command = helper.color_input(
@@ -34,20 +36,28 @@ class Pages():
 
             self._process_command(command)
 
+##############################################################################
+
     def _process_command(self, command: str):
         print("Pages Process Command should be overwrited")
         assert (False)
         pass
+
+##############################################################################
 
     def _unknown_command(self):
         helper.color_print(
             TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
             "Unknown Command")
 
+##############################################################################
+
     def _command_home(self):
         helper.color_print(
             TerminalColors.hex_to_rgb(TerminalColors.paper_amber_300),
             "Going back to the home page...")
+
+##############################################################################
 
     def _command_exit(self):
         helper.color_print(
