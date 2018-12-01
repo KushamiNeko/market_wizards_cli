@@ -40,7 +40,7 @@ class Pages():
 
     def _process_command(self, command: str):
         print("Pages Process Command should be overwrited")
-        assert (False)
+        assert False
         pass
 
 ##############################################################################

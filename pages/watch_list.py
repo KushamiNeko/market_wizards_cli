@@ -69,8 +69,6 @@ class WatchList(Pages):
                 "No Entities Match The Queries")
             return
 
-##############################################################################
-
         helper.color_print(
             TerminalColors.hex_to_rgb(TerminalColors.paper_light_blue_300),
             self._print_format.format(

@@ -1,5 +1,5 @@
-import pymongo
 from typing import Dict, List
+import pymongo
 
 ##############################################################################
 
