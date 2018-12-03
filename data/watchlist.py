@@ -20,11 +20,11 @@ def check_item(entity: Dict[str, str]) -> Dict[str, Any]:
     # unnecessary = ["earnings", "note"]
 
     re_symbol = r"[A-Za-z]+"
-    re_status = r"(?:earnings|portfolio|charging|launched)"
+    re_status = r"(?:earnings|portfolio|charging|launched|e|p|c|l)"
     re_price = r"[0-9.]"
     re_ranks = r"[A-Ea-e]"
     re_earnings = r"\d{8}"
-    re_flag = r"(?:true|false)"
+    re_flag = r"(?:true|false|t|f)"
 
     for key in necessary:
         if key not in entity:
@@ -47,6 +47,15 @@ def check_item(entity: Dict[str, str]) -> Dict[str, Any]:
 
         if key == "status":
             if re.match(re_status, value):
+                if value == "e":
+                    value = "earnings"
+                if value == "p":
+                    value = "portfolio"
+                if value == "c":
+                    value = "charging"
+                if value == "l":
+                    value = "launched"
+
                 struct[key] = value.upper()
             else:
                 raise ValueError("{}: invalid value".format(key))
@@ -80,9 +89,9 @@ def check_item(entity: Dict[str, str]) -> Dict[str, Any]:
 
         if key == "flag":
             if re.match(re_flag, value):
-                if value == "true":
+                if value == "true" or value == "t":
                     struct[key] = True
-                elif value == "false":
+                elif value == "false" or value == "f":
                     struct[key] = False
             else:
                 raise ValueError("{}: invalid value".format(key))

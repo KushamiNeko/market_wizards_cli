@@ -11,13 +11,14 @@ from data import watchlist
 class WatchList(Pages):
 
     _actions = [
-        "show", "search", "add", "edit", "delete", "clear all", "home", "exit"
+        "show", "search", "calculate", "add", "edit", "delete", "clear all",
+        "home", "exit"
     ]
 
     _width = 20
     _width_large = _width * 2
     _print_format = (
-        "{symbol: <6}" + "{price: >{width}}" + "{status: >{width}}" +
+        "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width}}" +
         "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
         "{earnings: >{width}}" + "{note: >{note_width}}")
 
@@ -80,7 +81,7 @@ class WatchList(Pages):
                 grs="GroupRS",
                 rs="RS",
                 value="Value",
-                earnings="Earnings Date",
+                earnings="EarningsDate",
                 note="Note",
                 width=self._width,
                 note_width=self._width_large))
@@ -106,10 +107,10 @@ class WatchList(Pages):
             if entity["status"].lower() == "earnings":
                 if entity["flag"]:
                     color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_brown_200)
+                        TerminalColors.paper_amber_200)
                 else:
                     color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_brown_300)
+                        TerminalColors.paper_amber_300)
 
             if entity.get("earnings", "") != "":
                 if helper.days_to_date(entity["earnings"]) < 7:
@@ -134,15 +135,15 @@ class WatchList(Pages):
 
     def _sort_entity(self, entity: Dict):
 
-        multiplier = 1000
+        multiplier = 100
 
         points = 0
 
-        points += self._sort_entity_status(entity, 5 * multiplier)
-        points += self._sort_entity_flag(entity, 4 * multiplier)
-        points += self._sort_entity_rank(entity, "grs", 3 * multiplier)
-        points += self._sort_entity_rank(entity, "rs", 2 * multiplier)
-        points += self._sort_entity_rank(entity, "value", 1 * multiplier)
+        points += self._sort_entity_status(entity, 1024 * multiplier)
+        points += self._sort_entity_flag(entity, 256 * multiplier)
+        points += self._sort_entity_rank(entity, "grs", 64 * multiplier)
+        points += self._sort_entity_rank(entity, "rs", 16 * multiplier)
+        points += self._sort_entity_rank(entity, "value", 4 * multiplier)
 
         return points
 
@@ -203,7 +204,7 @@ class WatchList(Pages):
             q = helper.key_value_input(
                 TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
                 "Please enter your entity " +
-                "(symbol price status earnings grs rs value note flag) ")
+                "(symbol price status earnings grs rs value flag note) ")
 
             entity = watchlist.check_item(q)
         except ValueError as e:
@@ -232,12 +233,6 @@ class WatchList(Pages):
                 TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
                 "error: {}".format(e))
             return
-
-        # if len(q) == 0:
-        # helper.color_print(
-        # TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
-        # "No Queries Dound")
-        # return
 
         self.context.database.delete(self._database, self.context.uid, q)
 
