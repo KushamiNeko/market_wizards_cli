@@ -1,4 +1,5 @@
 from typing import Tuple, Dict
+import datetime
 
 ##############################################################################
 
@@ -19,10 +20,18 @@ def color_input(rgb: Tuple[int, int, int], message: str) -> str:
 ##############################################################################
 
 
-def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict:
-    values = color_input(rgb, message)
+def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict[str, str]:
+    values = color_input(rgb, message).strip()
 
     pair = {}
+
+    if values == "":
+        raise ValueError("empty input")
+
+    split = values.split(" ")
+
+    if len(split) < 2:
+        raise ValueError("no key value pair")
 
     for value in values.split(" "):
         strings = value.split("=")
@@ -32,6 +41,15 @@ def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict:
         pair[key] = value
 
     return pair
+
+
+##############################################################################
+
+
+def days_to_date(date: int) -> int:
+    now = int(datetime.datetime.now().strftime("%Y%m%d"))
+    days = date - now
+    return days
 
 
 ##############################################################################

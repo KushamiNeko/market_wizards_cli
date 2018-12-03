@@ -3,6 +3,7 @@ from pages.pages import Pages
 from context import Context
 from terminal import TerminalColors
 from typing import Dict, List
+from data import watchlist
 
 ##############################################################################
 
@@ -14,10 +15,11 @@ class WatchList(Pages):
     ]
 
     _width = 20
-    _width_large = _width * 3
-    _print_format = ("    " + "{m1: <6}" + "{m2: >{width}}" + "{m3: >{width}}" +
-                     "{m4: >{width}}" + "{m5: >{width}}" + "{m6: >{width}}" +
-                     "{m7: >{note_width}}")
+    _width_large = _width * 2
+    _print_format = (
+        "{symbol: <6}" + "{price: >{width}}" + "{status: >{width}}" +
+        "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
+        "{earnings: >{width}}" + "{note: >{note_width}}")
 
     _database = "--watch-list--"
 
@@ -72,45 +74,75 @@ class WatchList(Pages):
         helper.color_print(
             TerminalColors.hex_to_rgb(TerminalColors.paper_light_blue_300),
             self._print_format.format(
-                m1="Symbol",
-                m2="Price",
-                m3="Status",
-                m4="GroupRS",
-                m5="RS",
-                m6="Fundamentals",
-                m7="Note",
-                # m8="Flag",
+                symbol="Symbol",
+                price="Price",
+                status="Status",
+                grs="GroupRS",
+                rs="RS",
+                value="Value",
+                earnings="Earnings Date",
+                note="Note",
                 width=self._width,
                 note_width=self._width_large))
 
-        entities.sort(key=lambda entity: self._sort_entity(entity, {}))
+        entities.sort(key=lambda entity: self._sort_entity(entity))
 
         for entity in entities:
+
+            color = TerminalColors.hex_to_rgb(TerminalColors.paper_grey_400)
+
+            if entity["flag"]:
+                color = TerminalColors.hex_to_rgb(
+                    TerminalColors.paper_green_200)
+
+            if entity["status"].lower() == "portfolio":
+                if entity["flag"]:
+                    color = TerminalColors.hex_to_rgb(
+                        TerminalColors.paper_indigo_200)
+                else:
+                    color = TerminalColors.hex_to_rgb(
+                        TerminalColors.paper_indigo_300)
+
+            if entity["status"].lower() == "earnings":
+                if entity["flag"]:
+                    color = TerminalColors.hex_to_rgb(
+                        TerminalColors.paper_brown_200)
+                else:
+                    color = TerminalColors.hex_to_rgb(
+                        TerminalColors.paper_brown_300)
+
+            if entity.get("earnings", "") != "":
+                if helper.days_to_date(entity["earnings"]) < 7:
+                    color = TerminalColors.hex_to_rgb(
+                        TerminalColors.paper_pink_200)
+
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_blue_grey_100),
+                color,
                 self._print_format.format(
-                    m1=entity["symbol"],
-                    m2=entity["price"],
-                    m3=entity["status"],
-                    m4=entity["grs"],
-                    m5=entity["rs"],
-                    m6=entity["fundamentals"],
-                    m7=entity["note"],
-                    # m8=entity["flag"],
+                    symbol=entity.get("symbol", ""),
+                    price=entity.get("price", ""),
+                    status=entity.get("status", ""),
+                    grs=entity.get("grs", ""),
+                    rs=entity.get("rs", ""),
+                    value=entity.get("value", ""),
+                    earnings=entity.get("earnings", ""),
+                    note=entity.get("note", ""),
                     width=self._width,
                     note_width=self._width_large))
 
 ##############################################################################
 
-    def _sort_entity(self, entity: Dict, weights: Dict):
+    def _sort_entity(self, entity: Dict):
+
+        multiplier = 1000
 
         points = 0
 
-        points += self._sort_entity_status(entity, 100)
-        points += self._sort_entity_flag(entity, 50)
-        points += self._sort_entity_rank(entity, "grs", 20)
-        points += self._sort_entity_rank(entity, "rs", 10)
-        points += self._sort_entity_rank(entity, "fundamentals", 5)
+        points += self._sort_entity_status(entity, 5 * multiplier)
+        points += self._sort_entity_flag(entity, 4 * multiplier)
+        points += self._sort_entity_rank(entity, "grs", 3 * multiplier)
+        points += self._sort_entity_rank(entity, "rs", 2 * multiplier)
+        points += self._sort_entity_rank(entity, "value", 1 * multiplier)
 
         return points
 
@@ -149,9 +181,15 @@ class WatchList(Pages):
 ##############################################################################
 
     def _command_search(self):
-        q = helper.key_value_input(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
-            "What do you want to search? ")
+        try:
+            q = helper.key_value_input(
+                TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
+                "What do you want to search? ")
+        except ValueError as e:
+            helper.color_print(
+                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                "error: {}".format(e))
+            return
 
         entities = self.context.database.find(self._database, self.context.uid,
                                               q)
@@ -161,7 +199,21 @@ class WatchList(Pages):
 ##############################################################################
 
     def _command_add(self):
-        pass
+        try:
+            q = helper.key_value_input(
+                TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
+                "Please enter your entity " +
+                "(symbol price status earnings grs rs value note flag) ")
+
+            entity = watchlist.check_item(q)
+        except ValueError as e:
+            helper.color_print(
+                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                "error: {}".format(e))
+            return
+
+        self.context.database.insert_one(self._database, self.context.uid,
+                                         entity)
 
 ##############################################################################
 
@@ -171,15 +223,21 @@ class WatchList(Pages):
 ##############################################################################
 
     def _command_delete(self):
-        q = helper.key_value_input(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
-            "What do you want to delete? ")
-
-        if len(q) == 0:
+        try:
+            q = helper.key_value_input(
+                TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
+                "What do you want to delete? ")
+        except ValueError as e:
             helper.color_print(
                 TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
-                "No Queries Dound")
+                "error: {}".format(e))
             return
+
+        # if len(q) == 0:
+        # helper.color_print(
+        # TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+        # "No Queries Dound")
+        # return
 
         self.context.database.delete(self._database, self.context.uid, q)
 

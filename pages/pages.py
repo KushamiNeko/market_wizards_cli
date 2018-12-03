@@ -21,7 +21,8 @@ class Pages():
         while True:
             command = helper.color_input(
                 TerminalColors.hex_to_rgb(TerminalColors.paper_teal_300),
-                "Command ({}): ".format(" ".join(self._actions)))
+                "Command ({}): ".format(" ".join(
+                    map(lambda x: "'{}'".format(x), self._actions))))
 
             if command not in self._actions:
                 self._unknown_command()

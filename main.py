@@ -20,7 +20,8 @@ def _main_loop(context: Context):
     while True:
         page = helper.color_input(
             TerminalColors.hex_to_rgb(TerminalColors.paper_purple_300),
-            "Where Do you want to go? ({}) ".format(" ".join(PAGES)))
+            "Where Do you want to go? ({}) ".format(" ".join(
+                map(lambda x: "'{}'".format(x), PAGES))))
 
         if page not in PAGES:
             helper.color_print(

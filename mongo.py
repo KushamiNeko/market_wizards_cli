@@ -13,6 +13,20 @@ class MongoInterface():
 
 ##############################################################################
 
+    def insert_one(self, database: str, collection: str, entity: Dict):
+        db = self.client[database]
+        collection = db[collection]
+        collection.insert_one(entity)
+
+##############################################################################
+
+    def insert(self, database: str, collection: str, entities: List):
+        db = self.client[database]
+        collection = db[collection]
+        collection.insert_one(entities)
+
+##############################################################################
+
     def find_one(self, database: str, collection: str, queries: Dict) -> Dict:
 
         db = self.client[database]
