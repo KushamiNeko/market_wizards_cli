@@ -16,7 +16,7 @@ class WatchList(Pages):
     ]
 
     _width = 20
-    _width_large = _width * 2
+    _width_large = _width
     _print_format = (
         "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width}}" +
         "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
@@ -56,7 +56,7 @@ class WatchList(Pages):
 
         if len(entities) == 0:
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
                 "No Entities Match The Queries")
             return
 
@@ -68,20 +68,20 @@ class WatchList(Pages):
 
         if len(entities) == 0:
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
                 "No Entities Match The Queries")
             return
 
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_light_blue_300),
+            helper.hex_to_rgb(TerminalColors.paper_light_blue_300),
             self._print_format.format(
                 symbol="Symbol",
                 price="Price",
                 status="Status",
-                grs="GroupRS",
+                grs="GRS",
                 rs="RS",
                 value="Value",
-                earnings="EarningsDate",
+                earnings="Earnings",
                 note="Note",
                 width=self._width,
                 note_width=self._width_large))
@@ -90,32 +90,20 @@ class WatchList(Pages):
 
         for entity in entities:
 
-            color = TerminalColors.hex_to_rgb(TerminalColors.paper_grey_400)
+            color = helper.hex_to_rgb(TerminalColors.paper_grey_300)
 
             if entity["flag"]:
-                color = TerminalColors.hex_to_rgb(
-                    TerminalColors.paper_green_200)
+                color = helper.hex_to_rgb(TerminalColors.paper_lime_200)
 
             if entity["status"].lower() == "portfolio":
                 if entity["flag"]:
-                    color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_indigo_200)
+                    color = helper.hex_to_rgb(TerminalColors.paper_indigo_200)
                 else:
-                    color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_indigo_300)
-
-            if entity["status"].lower() == "earnings":
-                if entity["flag"]:
-                    color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_amber_200)
-                else:
-                    color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_amber_300)
+                    color = helper.hex_to_rgb(TerminalColors.paper_indigo_300)
 
             if entity.get("earnings", "") != "":
                 if helper.days_to_date(entity["earnings"]) < 7:
-                    color = TerminalColors.hex_to_rgb(
-                        TerminalColors.paper_pink_200)
+                    color = helper.hex_to_rgb(TerminalColors.paper_pink_300)
 
             helper.color_print(
                 color,
@@ -150,14 +138,12 @@ class WatchList(Pages):
 ##############################################################################
 
     def _sort_entity_status(self, entity: Dict, multiplier: int):
-        if entity["status"].lower() == "earnings":
-            return 1 * multiplier
         if entity["status"].lower() == "portfolio":
-            return 2 * multiplier
+            return 1 * multiplier
         if entity["status"].lower() == "charging":
-            return 3 * multiplier
+            return 2 * multiplier
         if entity["status"].lower() == "launched":
-            return 4 * multiplier
+            return 3 * multiplier
 
 ##############################################################################
 
@@ -184,13 +170,15 @@ class WatchList(Pages):
     def _command_search(self):
         try:
             q = helper.key_value_input(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
+                helper.hex_to_rgb(TerminalColors.paper_orange_200),
                 "What do you want to search? ")
         except ValueError as e:
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
                 "error: {}".format(e))
             return
+
+        q = watchlist.clean_entity(q)
 
         entities = self.context.database.find(self._database, self.context.uid,
                                               q)
@@ -202,14 +190,14 @@ class WatchList(Pages):
     def _command_add(self):
         try:
             q = helper.key_value_input(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
+                helper.hex_to_rgb(TerminalColors.paper_orange_200),
                 "Please enter your entity " +
                 "(symbol price status earnings grs rs value flag note) ")
 
             entity = watchlist.check_item(q)
         except ValueError as e:
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
                 "error: {}".format(e))
             return
 
@@ -226,13 +214,15 @@ class WatchList(Pages):
     def _command_delete(self):
         try:
             q = helper.key_value_input(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_orange_200),
+                helper.hex_to_rgb(TerminalColors.paper_orange_200),
                 "What do you want to delete? ")
         except ValueError as e:
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
                 "error: {}".format(e))
             return
+
+        q = watchlist.clean_entity(q)
 
         self.context.database.delete(self._database, self.context.uid, q)
 

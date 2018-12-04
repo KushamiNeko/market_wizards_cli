@@ -297,15 +297,5 @@ class TerminalColors:
     light_secondary_opacity = 0.7
     light_primary_opacity = 1.0
 
-    @staticmethod
-    def hex_to_rgb(hexstr: str) -> Tuple[int]:
-        assert (len(hexstr) == 6)
-
-        r = int(hexstr[0:2], 16)
-        g = int(hexstr[2:4], 16)
-        b = int(hexstr[4:6], 16)
-
-        return (r, g, b)
-
 
 ##############################################################################

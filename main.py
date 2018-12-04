@@ -19,14 +19,13 @@ def _main_loop(context: Context):
 
     while True:
         page = helper.color_input(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_purple_300),
+            helper.hex_to_rgb(TerminalColors.paper_purple_300),
             "Where Do you want to go? ({}) ".format(" ".join(
                 map(lambda x: "'{}'".format(x), PAGES))))
 
         if page not in PAGES:
             helper.color_print(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
-                "Unknown Page")
+                helper.hex_to_rgb(TerminalColors.paper_red_500), "Unknown Page")
             continue
 
         if page == "exit":
@@ -49,7 +48,7 @@ if __name__ == "__main__":
     ##########################################################################
 
     helper.color_print(
-        TerminalColors.hex_to_rgb(TerminalColors.paper_amber_300),
+        helper.hex_to_rgb(TerminalColors.paper_amber_300),
         "Welcom to Market Wizards command line interface")
 
     email = input("email: ")
@@ -64,8 +63,7 @@ if __name__ == "__main__":
                                            base64.b64decode(user["password"])):
 
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_amber_300),
-            "Successful!!!")
+            helper.hex_to_rgb(TerminalColors.paper_amber_300), "Successful!!!")
 
         UID = user["uid"]
 
@@ -74,12 +72,12 @@ if __name__ == "__main__":
         _main_loop(CONTEXT)
 
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_amber_300),
+            helper.hex_to_rgb(TerminalColors.paper_amber_300),
             "Thank you for using Market Wizards!!!")
 
     else:
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
+            helper.hex_to_rgb(TerminalColors.paper_red_500),
             "Email or Password Error")
 
 ##############################################################################

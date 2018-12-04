@@ -1,5 +1,6 @@
 from typing import Tuple, Dict
 import datetime
+import readline
 
 ##############################################################################
 
@@ -30,7 +31,7 @@ def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict[str, str]:
 
     split = values.split(" ")
 
-    if len(split) < 2:
+    if len(split) < 1:
         raise ValueError("no key value pair")
 
     for value in values.split(" "):
@@ -50,6 +51,19 @@ def days_to_date(date: int) -> int:
     now = int(datetime.datetime.now().strftime("%Y%m%d"))
     days = date - now
     return days
+
+
+##############################################################################
+
+
+def hex_to_rgb(hexstr: str) -> Tuple[int, int, int]:
+    assert len(hexstr) == 6
+
+    r = int(hexstr[0:2], 16)
+    g = int(hexstr[2:4], 16)
+    b = int(hexstr[4:6], 16)
+
+    return (r, g, b)
 
 
 ##############################################################################

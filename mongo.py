@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Any
 import pymongo
 
 ##############################################################################
@@ -13,21 +13,24 @@ class MongoInterface():
 
 ##############################################################################
 
-    def insert_one(self, database: str, collection: str, entity: Dict):
+    def insert_one(self, database: str, collection: str,
+                   entity: Dict[str, Any]):
         db = self.client[database]
         collection = db[collection]
         collection.insert_one(entity)
 
 ##############################################################################
 
-    def insert(self, database: str, collection: str, entities: List):
+    def insert(self, database: str, collection: str,
+               entities: List[Dict[str, Any]]):
         db = self.client[database]
         collection = db[collection]
         collection.insert_one(entities)
 
 ##############################################################################
 
-    def find_one(self, database: str, collection: str, queries: Dict) -> Dict:
+    def find_one(self, database: str, collection: str,
+                 queries: Dict[str, Any]) -> Dict[str, Any]:
 
         db = self.client[database]
         collection = db[collection]
@@ -35,7 +38,8 @@ class MongoInterface():
 
 ##############################################################################
 
-    def find(self, database: str, collection: str, queries: Dict) -> List:
+    def find(self, database: str, collection: str,
+             queries: Dict[str, Any]) -> List[Dict[str, Any]]:
 
         db = self.client[database]
         collection = db[collection]
@@ -48,7 +52,8 @@ class MongoInterface():
 
 ##############################################################################
 
-    def delete_one(self, database: str, collection: str, queries: Dict):
+    def delete_one(self, database: str, collection: str,
+                   queries: Dict[str, Any]):
 
         db = self.client[database]
         collection = db[collection]
@@ -57,7 +62,7 @@ class MongoInterface():
 
 ##############################################################################
 
-    def delete(self, database: str, collection: str, queries: Dict):
+    def delete(self, database: str, collection: str, queries: Dict[str, Any]):
 
         db = self.client[database]
         collection = db[collection]

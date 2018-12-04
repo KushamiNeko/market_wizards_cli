@@ -20,9 +20,11 @@ class Pages():
     def main_loop(self):
         while True:
             command = helper.color_input(
-                TerminalColors.hex_to_rgb(TerminalColors.paper_teal_300),
+                helper.hex_to_rgb(TerminalColors.paper_teal_300),
                 "Command ({}): ".format(" ".join(
                     map(lambda x: "'{}'".format(x), self._actions))))
+
+            command = command.strip()
 
             if command not in self._actions:
                 self._unknown_command()
@@ -48,21 +50,20 @@ class Pages():
 
     def _unknown_command(self):
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_red_500),
-            "Unknown Command")
+            helper.hex_to_rgb(TerminalColors.paper_red_500), "Unknown Command")
 
 ##############################################################################
 
     def _command_home(self):
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_amber_300),
+            helper.hex_to_rgb(TerminalColors.paper_amber_300),
             "Going back to the home page...")
 
 ##############################################################################
 
     def _command_exit(self):
         helper.color_print(
-            TerminalColors.hex_to_rgb(TerminalColors.paper_amber_300),
+            helper.hex_to_rgb(TerminalColors.paper_amber_300),
             "Thank you for using Market Wizards!!!")
         exit(0)
 
