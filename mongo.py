@@ -17,6 +17,7 @@ class MongoInterface():
                    entity: Dict[str, Any]):
         db = self.client[database]
         collection = db[collection]
+
         collection.insert_one(entity)
 
 ##############################################################################
@@ -25,7 +26,26 @@ class MongoInterface():
                entities: List[Dict[str, Any]]):
         db = self.client[database]
         collection = db[collection]
+
         collection.insert_one(entities)
+
+##############################################################################
+
+    def replace_one(self, database: str, collection: str,
+                    queries: Dict[str, Any], new_entity: Dict[str, Any]):
+        db = self.client[database]
+        collection = db[collection]
+
+        collection.replace_one(queries, new_entity)
+
+##############################################################################
+
+    def replace(self, database: str, collection: str, queries: Dict[str, Any],
+                new_entity: Dict[str, Any]):
+        db = self.client[database]
+        collection = db[collection]
+
+        collection.replace_many(queries, new_entity)
 
 ##############################################################################
 
@@ -34,6 +54,7 @@ class MongoInterface():
 
         db = self.client[database]
         collection = db[collection]
+
         return collection.find_one(queries)
 
 ##############################################################################

@@ -1,19 +1,21 @@
 from context import Context
 import helper
 from terminal import TerminalColors
+from typing import List
 
 ##############################################################################
 
 
 class Pages():
 
-    context = None
-    database = None
+    context: Context = None
 
-    _actions = ["home", "exit"]
+    _base_actions: List[str] = ["home", "exit"]
+    _actions: List[str] = []
 
     def __init__(self, context: Context):
         self.context = context
+        self._actions += self._base_actions
 
 ##############################################################################
 

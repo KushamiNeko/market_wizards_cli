@@ -11,8 +11,13 @@ from data import watchlist
 class WatchList(Pages):
 
     _actions = [
-        "show", "search", "calculate", "add", "edit", "delete", "clear all",
-        "home", "exit"
+        "show",
+        "search",
+        "calculate",
+        "add",
+        "edit",
+        "delete",
+        "clear all",
     ]
 
     _width = 20
@@ -194,7 +199,11 @@ class WatchList(Pages):
                 "Please enter your entity " +
                 "(symbol price status earnings grs rs value flag note) ")
 
-            entity = watchlist.check_item(q)
+            # entity = watchlist.check_item(q)
+
+            watchlist.check_necessary_keys(q)
+            entity = watchlist.check_values(q)
+
         except ValueError as e:
             helper.color_print(
                 helper.hex_to_rgb(TerminalColors.paper_red_500),
@@ -207,7 +216,39 @@ class WatchList(Pages):
 ##############################################################################
 
     def _command_edit(self):
-        pass
+        try:
+            q = helper.key_value_input(
+                helper.hex_to_rgb(TerminalColors.paper_orange_200),
+                "Which entity do you want to replace? ")
+        except ValueError as e:
+            helper.color_print(
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
+                "error: {}".format(e))
+            return
+
+        try:
+            new_values = helper.key_value_input(
+                helper.hex_to_rgb(TerminalColors.paper_orange_200),
+                "Please enter your entity " +
+                "(symbol price status earnings grs rs value flag note) ")
+
+            new_values = watchlist.check_values(new_values)
+        except ValueError as e:
+            helper.color_print(
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
+                "error: {}".format(e))
+            return
+
+        q = watchlist.clean_entity(q)
+
+        entity = self.context.database.find_one(self._database,
+                                                self.context.uid, q)
+
+        for k in new_values:
+            entity[k] = new_values[k]
+
+        self.context.database.replace_one(self._database, self.context.uid, q,
+                                          entity)
 
 ##############################################################################
 

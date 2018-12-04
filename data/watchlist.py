@@ -4,12 +4,28 @@ import re
 ##############################################################################
 
 
-def check_item(entity: Dict[str, str]) -> Dict[str, Any]:
-
-    struct: Dict[str, Any] = {}
-
+def check_necessary_keys(entity: Dict[str, Any]):
     necessary = ["symbol", "price", "status", "grs", "rs", "value", "flag"]
     # unnecessary = ["earnings", "note"]
+
+    for key in necessary:
+        if key not in entity:
+            raise ValueError("{} can not be empty".format(key))
+
+
+##############################################################################
+
+
+def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
+
+    # necessary = ["symbol", "price", "status", "grs", "rs", "value", "flag"]
+    # unnecessary = ["earnings", "note"]
+
+    # for key in necessary:
+    # if key not in entity:
+    # raise ValueError("{} can not be empty".format(key))
+
+    struct: Dict[str, Any] = {}
 
     re_symbol = r"[A-Za-z]+"
     re_status = r"(?:portfolio|charging|launched|p|c|l)"
@@ -17,10 +33,6 @@ def check_item(entity: Dict[str, str]) -> Dict[str, Any]:
     re_ranks = r"[A-Ea-e]"
     re_earnings = r"\d{8}"
     re_flag = r"(?:true|false|t|f)"
-
-    for key in necessary:
-        if key not in entity:
-            raise ValueError("{} can not be empty".format(key))
 
     for key in entity:
         value = entity[key].strip()

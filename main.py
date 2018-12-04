@@ -4,6 +4,7 @@ import base64
 
 from mongo import MongoInterface
 from pages.watch_list import WatchList
+from pages.calculator import Calculator
 from context import Context
 from terminal import TerminalColors
 import helper
@@ -14,7 +15,8 @@ import helper
 def _main_loop(context: Context):
 
     PAGES = [
-        "watch list", "transactions", "new transactions", "statistic", "exit"
+        "watch list", "calculator", "transactions", "new transactions",
+        "statistic", "exit"
     ]
 
     while True:
@@ -32,8 +34,12 @@ def _main_loop(context: Context):
             break
 
         if page == "watch list":
-            p = WatchList(context)
-            p.main_loop()
+            watchlist = WatchList(context)
+            watchlist.main_loop()
+
+        if page == "calculator":
+            calculator = Calculator(context)
+            calculator.main_loop()
 
 
 ##############################################################################
