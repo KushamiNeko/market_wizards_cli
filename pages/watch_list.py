@@ -1,9 +1,9 @@
 import helper
 from pages.pages import Pages
 from context import Context
-from terminal import TerminalColors
 from typing import Dict, List
 from data import watchlist
+import config
 
 ##############################################################################
 
@@ -20,12 +20,13 @@ class WatchList(Pages):
         "clear all",
     ]
 
-    _width = 20
-    _width_large = _width
+    _width = 10
+    _width_l = 15
+    _width_xl = 20
     _print_format = (
-        "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width}}" +
+        "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width_l}}" +
         "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
-        "{earnings: >{width}}" + "{note: >{note_width}}")
+        "{earnings: >{width_l}}" + "{note: >{width_l}}")
 
     _database = "--watch-list--"
 
@@ -60,9 +61,8 @@ class WatchList(Pages):
                                               {})
 
         if len(entities) == 0:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "No Entities Match The Queries")
+            helper.color_print(config.COLOR_WARNINGS,
+                               "No Entities Match The Queries")
             return
 
         self._show_entities(entities)
@@ -72,13 +72,12 @@ class WatchList(Pages):
     def _show_entities(self, entities: List):
 
         if len(entities) == 0:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "No Entities Match The Queries")
+            helper.color_print(config.COLOR_WARNINGS,
+                               "No Entities Match The Queries")
             return
 
         helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_light_blue_300),
+            config.COLOR_WATCHLIST_LABEL,
             self._print_format.format(
                 symbol="Symbol",
                 price="Price",
@@ -89,26 +88,27 @@ class WatchList(Pages):
                 earnings="Earnings",
                 note="Note",
                 width=self._width,
-                note_width=self._width_large))
+                width_l=self._width_l,
+                width_xl=self._width_xl))
 
         entities.sort(key=lambda entity: self._sort_entity(entity))
 
         for entity in entities:
 
-            color = helper.hex_to_rgb(TerminalColors.paper_grey_300)
+            color = config.COLOR_WATCHLIST_GENERAL
 
             if entity["flag"]:
-                color = helper.hex_to_rgb(TerminalColors.paper_lime_200)
+                color = config.COLOR_WATCHLIST_FLAG
 
             if entity["status"].lower() == "portfolio":
                 if entity["flag"]:
-                    color = helper.hex_to_rgb(TerminalColors.paper_indigo_200)
+                    color = config.COLOR_WATCHLIST_PORTFOLIO_FLAG
                 else:
-                    color = helper.hex_to_rgb(TerminalColors.paper_indigo_300)
+                    color = config.COLOR_WATCHLIST_PORTFOLIO
 
             if entity.get("earnings", "") != "":
                 if helper.days_to_date(entity["earnings"]) < 7:
-                    color = helper.hex_to_rgb(TerminalColors.paper_pink_300)
+                    color = config.COLOR_WATCHLIST_EARNINGS
 
             helper.color_print(
                 color,
@@ -122,7 +122,8 @@ class WatchList(Pages):
                     earnings=entity.get("earnings", ""),
                     note=entity.get("note", ""),
                     width=self._width,
-                    note_width=self._width_large))
+                    width_l=self._width_l,
+                    width_xl=self._width_xl))
 
 ##############################################################################
 
@@ -174,13 +175,10 @@ class WatchList(Pages):
 
     def _command_search(self):
         try:
-            q = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "What do you want to search? ")
+            q = helper.key_value_input(config.COLOR_INFO,
+                                       "What do you want to search? ")
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         q = watchlist.clean_entity(q)
@@ -195,19 +193,14 @@ class WatchList(Pages):
     def _command_add(self):
         try:
             q = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "Please enter your entity " +
+                config.COLOR_INFO, "Please enter your entity " +
                 "(symbol price status earnings grs rs value flag note) ")
-
-            # entity = watchlist.check_item(q)
 
             watchlist.check_necessary_keys(q)
             entity = watchlist.check_values(q)
 
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         self.context.database.insert_one(self._database, self.context.uid,
@@ -217,26 +210,20 @@ class WatchList(Pages):
 
     def _command_edit(self):
         try:
-            q = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "Which entity do you want to replace? ")
+            q = helper.key_value_input(config.COLOR_INFO,
+                                       "Which entity do you want to replace? ")
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         try:
             new_values = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "Please enter your entity " +
+                config.COLOR_INFO, "Please enter your entity " +
                 "(symbol price status earnings grs rs value flag note) ")
 
             new_values = watchlist.check_values(new_values)
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         q = watchlist.clean_entity(q)
@@ -254,13 +241,10 @@ class WatchList(Pages):
 
     def _command_delete(self):
         try:
-            q = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "What do you want to delete? ")
+            q = helper.key_value_input(config.COLOR_INFO,
+                                       "What do you want to delete? ")
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         q = watchlist.clean_entity(q)

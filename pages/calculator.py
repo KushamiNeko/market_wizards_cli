@@ -1,15 +1,15 @@
 import helper
 from pages.pages import Pages
 from context import Context
-from terminal import TerminalColors
 import re
+import config
 
 ##############################################################################
 
 
 class Calculator(Pages):
 
-    _actions = ["stop", "profit"]
+    _actions = ["stop", "depth"]
 
     def __init__(self, context: Context):
         super(Calculator, self).__init__(context)
@@ -19,62 +19,56 @@ class Calculator(Pages):
     def _process_command(self, command: str):
         if command == "stop":
             self._command_stop()
-        if command == "profit":
-            self._command_profit()
+        if command == "depth":
+            self._command_depth()
+        # if command == "profit":
+        # self._command_profit()
 
 ##############################################################################
 
     def _command_stop(self):
         try:
-            q = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "What is your price ? ")
+            q = helper.key_value_input(config.COLOR_INFO,
+                                       "What is the price ? ")
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         if "price" not in q:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "No price value")
+            helper.color_print(config.COLOR_WARNINGS, "No price value")
         else:
             value = q["price"]
             if re.match(r"[0-9.]+", value):
                 price = float(value)
 
-                for i in range(-1, -9, -1):
+                for i in range(-1, -11, -1):
                     percent = float(i) / 100.0
 
-                    color = helper.hex_to_rgb(TerminalColors.paper_grey_300)
+                    color = config.COLOR_WHITE
+
+                    if i <= -7:
+                        color = config.COLOR_WARNINGS
+
                     helper.color_print(
-                        color, "Stop {0: >2}%: {1: >4,.4f} $".format(
+                        color, "Stop {0: >2}%: {1: >4,.2f} $".format(
                             i, price * (1.0 + percent)))
 
             else:
-                helper.color_print(
-                    helper.hex_to_rgb(TerminalColors.paper_red_500),
-                    "invalid price")
+                helper.color_print(config.COLOR_WARNINGS, "invalid price")
                 return
 
 ##############################################################################
 
     def _command_profit(self):
+        pass
         try:
-            q = helper.key_value_input(
-                helper.hex_to_rgb(TerminalColors.paper_orange_200),
-                "What is your price? ")
+            q = helper.key_value_input(config.COLOR_INFO, "What is the price? ")
         except ValueError as e:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
         if "price" not in q:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500),
-                "No price value")
+            helper.color_print(config.COLOR_WARNINGS, "No price value")
         else:
             value = q["price"]
             if re.match(r"[0-9.]+", value):
@@ -83,15 +77,47 @@ class Calculator(Pages):
                 for i in range(1, 36):
                     percent = float(i) / 100.0
 
-                    color = helper.hex_to_rgb(TerminalColors.paper_grey_300)
                     helper.color_print(
-                        color, "Profit {0: >3}%: {1: >4,.4f} $".format(
+                        config.COLOR_WHITE,
+                        "Profit {0: >3}%: {1: >4,.2f} $".format(
                             i, price * (1.0 + percent)))
 
             else:
+                helper.color_print(config.COLOR_WARNINGS, "invalid price")
+                return
+
+##############################################################################
+
+    def _command_depth(self):
+        try:
+            q = helper.key_value_input(
+                config.COLOR_INFO,
+                "Please enter the start price and the end price...")
+        except ValueError as e:
+            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
+            return
+
+        if "start" not in q:
+            helper.color_print(config.COLOR_WARNINGS, "No start price")
+
+        if "end" not in q:
+            helper.color_print(config.COLOR_WARNINGS, "No start price")
+        else:
+            start = q["start"]
+            end = q["end"]
+
+            if re.match(r"[0-9.]+", start) and re.match(r"[0-9.]+", end):
+                start_price = float(start)
+                end_price = float(end)
+
+                depth = (end_price - start_price) / start_price
+
                 helper.color_print(
-                    helper.hex_to_rgb(TerminalColors.paper_red_500),
-                    "invalid price")
+                    config.COLOR_WHITE,
+                    "Depth : {0: >3,.2f} %".format(depth * 100.0))
+
+            else:
+                helper.color_print(config.COLOR_WARNINGS, "invalid price")
                 return
 
 

@@ -1,7 +1,7 @@
 from context import Context
 import helper
-from terminal import TerminalColors
 from typing import List
+import config
 
 ##############################################################################
 
@@ -22,8 +22,7 @@ class Pages():
     def main_loop(self):
         while True:
             command = helper.color_input(
-                helper.hex_to_rgb(TerminalColors.paper_teal_300),
-                "Command ({}): ".format(" ".join(
+                config.COLOR_COMMAND, "Command ({}): ".format(" ".join(
                     map(lambda x: "'{}'".format(x), self._actions))))
 
             command = command.strip()
@@ -51,22 +50,18 @@ class Pages():
 ##############################################################################
 
     def _unknown_command(self):
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_red_500), "Unknown Command")
+        helper.color_print(config.COLOR_WARNINGS, "Unknown Command")
 
 ##############################################################################
 
     def _command_home(self):
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_amber_300),
-            "Going back to the home page...")
+        helper.color_print(config.COLOR_INFO, "Going back to the home page...")
 
 ##############################################################################
 
     def _command_exit(self):
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_amber_300),
-            "Thank you for using Market Wizards!!!")
+        helper.color_print(config.COLOR_INFO,
+                           "Thank you for using Market Wizards!!!")
         exit(0)
 
 

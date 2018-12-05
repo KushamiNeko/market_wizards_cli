@@ -6,8 +6,8 @@ from mongo import MongoInterface
 from pages.watch_list import WatchList
 from pages.calculator import Calculator
 from context import Context
-from terminal import TerminalColors
 import helper
+import config
 
 ##############################################################################
 
@@ -21,13 +21,12 @@ def _main_loop(context: Context):
 
     while True:
         page = helper.color_input(
-            helper.hex_to_rgb(TerminalColors.paper_purple_300),
+            config.COLOR_PAGES,
             "Where Do you want to go? ({}) ".format(" ".join(
                 map(lambda x: "'{}'".format(x), PAGES))))
 
         if page not in PAGES:
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_red_500), "Unknown Page")
+            helper.color_print(config.COLOR_WARNINGS, "Unknown Page")
             continue
 
         if page == "exit":
@@ -53,9 +52,8 @@ if __name__ == "__main__":
 
     ##########################################################################
 
-    helper.color_print(
-        helper.hex_to_rgb(TerminalColors.paper_amber_300),
-        "Welcom to Market Wizards command line interface")
+    helper.color_print(config.COLOR_INFO,
+                       "Welcom to Market Wizards command line interface")
 
     email = input("email: ")
     password = getpass.getpass("password: ").encode("utf-8")
@@ -68,8 +66,7 @@ if __name__ == "__main__":
     if user is not None and bcrypt.checkpw(password,
                                            base64.b64decode(user["password"])):
 
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_amber_300), "Successful!!!")
+        helper.color_print(config.COLOR_INFO, "Successful!!!")
 
         UID = user["uid"]
 
@@ -77,13 +74,10 @@ if __name__ == "__main__":
 
         _main_loop(CONTEXT)
 
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_amber_300),
-            "Thank you for using Market Wizards!!!")
+        helper.color_print(config.COLOR_INFO,
+                           "Thank you for using Market Wizards!!!")
 
     else:
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_red_500),
-            "Email or Password Error")
+        helper.color_print(config.COLOR_WARNINGS, "Email or Password Error")
 
 ##############################################################################
