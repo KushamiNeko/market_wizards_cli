@@ -1,4 +1,5 @@
 import helper
+from terminal import TerminalColors
 from pages.pages import Pages
 from context import Context
 from typing import Dict, List
@@ -22,13 +23,26 @@ class WatchList(Pages):
 
     _width = 10
     _width_l = 15
-    _width_xl = 20
+    _width_xl = 30
     _print_format = (
-        "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width_l}}" +
-        "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
-        "{earnings: >{width_l}}" + "{note: >{width_l}}")
+        "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width_l}}"
+        + "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
+        "{earnings: >{width_l}}" + "{note: >{width_xl}}")
 
     _database = "--watch-list--"
+
+    _color_items_label = config.COLOR_INFO
+
+    _color_items_earnings = config.COLOR_WARNINGS
+
+    _color_items_portfolio = helper.hex_to_rgb(TerminalColors.paper_purple_200)
+
+    _color_items_portfolio_flag = helper.hex_to_rgb(
+        TerminalColors.paper_purple_300)
+
+    _color_items_flag = helper.hex_to_rgb(TerminalColors.paper_light_green_200)
+
+    _color_items_general = helper.hex_to_rgb(TerminalColors.paper_grey_300)
 
     def __init__(self, context: Context):
         super(WatchList, self).__init__(context)
@@ -77,7 +91,7 @@ class WatchList(Pages):
             return
 
         helper.color_print(
-            config.COLOR_WATCHLIST_LABEL,
+            self._color_items_label,
             self._print_format.format(
                 symbol="Symbol",
                 price="Price",
@@ -95,20 +109,20 @@ class WatchList(Pages):
 
         for entity in entities:
 
-            color = config.COLOR_WATCHLIST_GENERAL
+            color = self._color_items_general
 
             if entity["flag"]:
-                color = config.COLOR_WATCHLIST_FLAG
+                color = self._color_items_flag
 
             if entity["status"].lower() == "portfolio":
                 if entity["flag"]:
-                    color = config.COLOR_WATCHLIST_PORTFOLIO_FLAG
+                    color = self._color_items_portfolio_flag
                 else:
-                    color = config.COLOR_WATCHLIST_PORTFOLIO
+                    color = self._color_items_portfolio
 
             if entity.get("earnings", "") != "":
                 if helper.days_to_date(entity["earnings"]) < 7:
-                    color = config.COLOR_WATCHLIST_EARNINGS
+                    color = self._color_items_earnings
 
             helper.color_print(
                 color,
@@ -210,8 +224,8 @@ class WatchList(Pages):
 
     def _command_edit(self):
         try:
-            q = helper.key_value_input(config.COLOR_INFO,
-                                       "Which entity do you want to replace? ")
+            q = helper.key_value_input(
+                config.COLOR_INFO, "Which entity do you want to replace? ")
         except ValueError as e:
             helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return

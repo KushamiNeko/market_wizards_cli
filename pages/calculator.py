@@ -62,7 +62,8 @@ class Calculator(Pages):
     def _command_profit(self):
         pass
         try:
-            q = helper.key_value_input(config.COLOR_INFO, "What is the price? ")
+            q = helper.key_value_input(config.COLOR_INFO,
+                                       "What is the price? ")
         except ValueError as e:
             helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return

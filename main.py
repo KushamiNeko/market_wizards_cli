@@ -59,7 +59,9 @@ if __name__ == "__main__":
     password = getpass.getpass("password: ").encode("utf-8")
 
     user = MONGO.find_one(
-        database="--admin--", collection="--user--", queries={
+        database="--admin--",
+        collection="--user--",
+        queries={
             "email": email,
         })
 
