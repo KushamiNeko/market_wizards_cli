@@ -4,9 +4,9 @@ import re
 ##############################################################################
 
 
-def check_necessary_keys(entity: Dict[str, Any]):
-    necessary = ["symbol", "price", "status", "grs", "rs", "value", "flag"]
-    # unnecessary = ["earnings", "note"]
+def check_necessary_keys(entity: Dict[str, Any]) -> None:
+    necessary = ["symbol", "status", "grs", "rs", "value"]
+    # unnecessary = ["price", "earnings", "note", "flag"]
 
     for key in necessary:
         if key not in entity:

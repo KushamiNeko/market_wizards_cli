@@ -1,6 +1,7 @@
 import helper
 from terminal import TerminalColors
 from pages.pages import Pages
+from pages.calculator import Calculator
 from context import Context
 from typing import Dict, List
 from data import watchlist
@@ -12,9 +13,9 @@ import config
 class WatchList(Pages):
 
     _actions = [
+        "calc",
         "show",
         "search",
-        "calculate",
         "add",
         "edit",
         "delete",
@@ -23,7 +24,7 @@ class WatchList(Pages):
 
     _width = 10
     _width_l = 15
-    _width_xl = 30
+    _width_xl = 50
     _print_format = (
         "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width_l}}"
         + "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
@@ -44,12 +45,16 @@ class WatchList(Pages):
 
     _color_items_general = helper.hex_to_rgb(TerminalColors.paper_grey_300)
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
         super(WatchList, self).__init__(context)
 
 ##############################################################################
 
-    def _process_command(self, command: str):
+    def _process_command(self, command: str) -> None:
+        if command == "calc":
+            calculator = Calculator(self.context)
+            calculator.main_loop()
+
         if command == "show":
             self._command_show()
 
@@ -70,7 +75,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _command_show(self):
+    def _command_show(self) -> None:
         entities = self.context.database.find(self._database, self.context.uid,
                                               {})
 
@@ -83,7 +88,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _show_entities(self, entities: List):
+    def _show_entities(self, entities: List) -> None:
 
         if len(entities) == 0:
             helper.color_print(config.COLOR_WARNINGS,
@@ -111,11 +116,11 @@ class WatchList(Pages):
 
             color = self._color_items_general
 
-            if entity["flag"]:
+            if entity.get("flag", False):
                 color = self._color_items_flag
 
             if entity["status"].lower() == "portfolio":
-                if entity["flag"]:
+                if entity.get("flag", False):
                     color = self._color_items_portfolio_flag
                 else:
                     color = self._color_items_portfolio
@@ -141,7 +146,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _sort_entity(self, entity: Dict):
+    def _sort_entity(self, entity: Dict) -> int:
 
         multiplier = 100
 
@@ -157,7 +162,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _sort_entity_status(self, entity: Dict, multiplier: int):
+    def _sort_entity_status(self, entity: Dict, multiplier: int) -> int:
         if entity["status"].lower() == "portfolio":
             return 1 * multiplier
         if entity["status"].lower() == "charging":
@@ -165,17 +170,20 @@ class WatchList(Pages):
         if entity["status"].lower() == "launched":
             return 3 * multiplier
 
+        raise ValueError("_sort_entity_status Should not reach this part")
+
 ##############################################################################
 
-    def _sort_entity_flag(self, entity: Dict, multiplier: int):
-        if entity["flag"]:
+    def _sort_entity_flag(self, entity: Dict, multiplier: int) -> int:
+        if entity.get("flag", False):
             return 1 * multiplier
         else:
             return 2 * multiplier
 
 ##############################################################################
 
-    def _sort_entity_rank(self, entity: Dict, rank: str, multiplier: int):
+    def _sort_entity_rank(self, entity: Dict, rank: str,
+                          multiplier: int) -> int:
         if entity[rank] == "A":
             return 1 * multiplier
         if entity[rank] == "B":
@@ -185,9 +193,11 @@ class WatchList(Pages):
         if entity[rank] == "D":
             return 4 * multiplier
 
+        raise ValueError("_sort_entity_rank Should not reach this part")
+
 ##############################################################################
 
-    def _command_search(self):
+    def _command_search(self) -> None:
         try:
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What do you want to search? ")
@@ -204,7 +214,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _command_add(self):
+    def _command_add(self) -> None:
         try:
             q = helper.key_value_input(
                 config.COLOR_INFO, "Please enter your entity " +
@@ -217,12 +227,21 @@ class WatchList(Pages):
             helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
+        old_entity = self.context.database.find_one(
+            self._database, self.context.uid, {"symbol": entity["symbol"]})
+
+        if old_entity is not None:
+            helper.color_print(
+                config.COLOR_WARNINGS,
+                "symbol already exists: {}".format(entity["symbol"]))
+            return
+
         self.context.database.insert_one(self._database, self.context.uid,
                                          entity)
 
 ##############################################################################
 
-    def _command_edit(self):
+    def _command_edit(self) -> None:
         try:
             q = helper.key_value_input(
                 config.COLOR_INFO, "Which entity do you want to replace? ")
@@ -253,7 +272,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _command_delete(self):
+    def _command_delete(self) -> None:
         try:
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What do you want to delete? ")
@@ -267,7 +286,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _command_clear_all(self):
+    def _command_clear_all(self) -> None:
         self.context.database.delete(self._database, self.context.uid, {})
 
 

@@ -14,7 +14,7 @@ class MongoInterface():
 ##############################################################################
 
     def insert_one(self, database: str, collection: str,
-                   entity: Dict[str, Any]):
+                   entity: Dict[str, Any]) -> None:
         db = self.client[database]
         collection = db[collection]
 
@@ -23,7 +23,7 @@ class MongoInterface():
 ##############################################################################
 
     def insert(self, database: str, collection: str,
-               entities: List[Dict[str, Any]]):
+               entities: List[Dict[str, Any]]) -> None:
         db = self.client[database]
         collection = db[collection]
 
@@ -32,7 +32,8 @@ class MongoInterface():
 ##############################################################################
 
     def replace_one(self, database: str, collection: str,
-                    queries: Dict[str, Any], new_entity: Dict[str, Any]):
+                    queries: Dict[str, Any],
+                    new_entity: Dict[str, Any]) -> None:
         db = self.client[database]
         collection = db[collection]
 
@@ -41,7 +42,7 @@ class MongoInterface():
 ##############################################################################
 
     def replace(self, database: str, collection: str, queries: Dict[str, Any],
-                new_entity: Dict[str, Any]):
+                new_entity: Dict[str, Any]) -> None:
         db = self.client[database]
         collection = db[collection]
 
@@ -74,7 +75,7 @@ class MongoInterface():
 ##############################################################################
 
     def delete_one(self, database: str, collection: str,
-                   queries: Dict[str, Any]):
+                   queries: Dict[str, Any]) -> None:
 
         db = self.client[database]
         collection = db[collection]
@@ -83,7 +84,8 @@ class MongoInterface():
 
 ##############################################################################
 
-    def delete(self, database: str, collection: str, queries: Dict[str, Any]):
+    def delete(self, database: str, collection: str,
+               queries: Dict[str, Any]) -> None:
 
         db = self.client[database]
         collection = db[collection]

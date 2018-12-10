@@ -5,6 +5,8 @@ import base64
 from mongo import MongoInterface
 from pages.watch_list import WatchList
 from pages.calculator import Calculator
+from pages.charts_rename import ChartsRename
+from pages.ibd_parser import IBDParser
 from context import Context
 import helper
 import config
@@ -12,17 +14,23 @@ import config
 ##############################################################################
 
 
-def _main_loop(context: Context):
+def _main_loop(context: Context) -> None:
 
     PAGES = [
-        "watch list", "calculator", "transactions", "new transactions",
-        "statistic", "exit"
+        "calc",
+        "watch list",
+        "transactions",
+        "new transactions",
+        "statistic",
+        "charts rename",
+        "ibd parser",
+        "exit",
     ]
 
     while True:
         page = helper.color_input(
             config.COLOR_PAGES,
-            "Where Do you want to go? ({}) ".format(" ".join(
+            "Where Do you want to go?\n({}) ".format(" ".join(
                 map(lambda x: "'{}'".format(x), PAGES))))
 
         if page not in PAGES:
@@ -32,13 +40,21 @@ def _main_loop(context: Context):
         if page == "exit":
             break
 
+        if page == "calc":
+            calculator = Calculator(context)
+            calculator.main_loop()
+
         if page == "watch list":
             watchlist = WatchList(context)
             watchlist.main_loop()
 
-        if page == "calculator":
-            calculator = Calculator(context)
-            calculator.main_loop()
+        if page == "charts rename":
+            rename = ChartsRename(context)
+            rename.main_loop()
+
+        if page == "ibd parser":
+            parser = IBDParser(context)
+            parser.main_loop()
 
 
 ##############################################################################

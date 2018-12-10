@@ -10,16 +10,18 @@ class Pages():
 
     context: Context = None
 
-    _base_actions: List[str] = ["home", "exit"]
+    _base_actions: List[str] = ["back", "exit"]
     _actions: List[str] = []
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
         self.context = context
-        self._actions += self._base_actions
+        for action in self._base_actions:
+            if action not in self._actions:
+                self._actions.append(action)
 
 ##############################################################################
 
-    def main_loop(self):
+    def main_loop(self) -> None:
         while True:
             command = helper.color_input(
                 config.COLOR_COMMAND, "Command ({}): ".format(" ".join(
@@ -31,8 +33,8 @@ class Pages():
                 self._unknown_command()
                 continue
 
-            if command == "home":
-                self._command_home()
+            if command == "back":
+                self._command_back()
                 break
 
             if command == "exit":
@@ -42,24 +44,25 @@ class Pages():
 
 ##############################################################################
 
-    def _process_command(self, command: str):
+    def _process_command(self, command: str) -> None:
         print("Pages Process Command should be overwrited")
         assert False
         pass
 
 ##############################################################################
 
-    def _unknown_command(self):
+    def _unknown_command(self) -> None:
         helper.color_print(config.COLOR_WARNINGS, "Unknown Command")
 
 ##############################################################################
 
-    def _command_home(self):
-        helper.color_print(config.COLOR_INFO, "Going back to the home page...")
+    def _command_back(self) -> None:
+        helper.color_print(config.COLOR_INFO,
+                           "Going back to the previous page...")
 
 ##############################################################################
 
-    def _command_exit(self):
+    def _command_exit(self) -> None:
         helper.color_print(config.COLOR_INFO,
                            "Thank you for using Market Wizards!!!")
         exit(0)

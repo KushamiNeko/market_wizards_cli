@@ -11,12 +11,12 @@ class Calculator(Pages):
 
     _actions = ["stop", "depth"]
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
         super(Calculator, self).__init__(context)
 
 ##############################################################################
 
-    def _process_command(self, command: str):
+    def _process_command(self, command: str) -> None:
         if command == "stop":
             self._command_stop()
         if command == "depth":
@@ -26,7 +26,7 @@ class Calculator(Pages):
 
 ##############################################################################
 
-    def _command_stop(self):
+    def _command_stop(self) -> None:
         try:
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What is the price ? ")
@@ -59,7 +59,7 @@ class Calculator(Pages):
 
 ##############################################################################
 
-    def _command_profit(self):
+    def _command_profit(self) -> None:
         pass
         try:
             q = helper.key_value_input(config.COLOR_INFO,
@@ -89,7 +89,7 @@ class Calculator(Pages):
 
 ##############################################################################
 
-    def _command_depth(self):
+    def _command_depth(self) -> None:
         try:
             q = helper.key_value_input(
                 config.COLOR_INFO,
