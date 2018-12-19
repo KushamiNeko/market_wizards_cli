@@ -98,14 +98,13 @@ class Calculator(Pages):
             helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
-        if "start" not in q:
+        if "start" not in q and "s" not in q:
             helper.color_print(config.COLOR_WARNINGS, "No start price")
-
-        if "end" not in q:
-            helper.color_print(config.COLOR_WARNINGS, "No start price")
+        elif "end" not in q and "e" not in q:
+            helper.color_print(config.COLOR_WARNINGS, "No end price")
         else:
-            start = q["start"]
-            end = q["end"]
+            start = q.get("start", q.get("s", ""))
+            end = q.get("end", q.get("e", ""))
 
             if re.match(r"[0-9.]+", start) and re.match(r"[0-9.]+", end):
                 start_price = float(start)

@@ -5,7 +5,11 @@ import re
 
 
 def check_necessary_keys(entity: Dict[str, Any]) -> None:
-    necessary = ["symbol", "status", "grs", "rs", "value"]
+    # necessary = [
+    # "symbol", "op", "status", "sctr", "grs", "rs", "acc", "eps", "smr",
+    # "comp"
+    # ]
+    necessary = ["symbol", "op", "status"]
     # unnecessary = ["price", "earnings", "note", "flag"]
 
     for key in necessary:
@@ -28,8 +32,10 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
     struct: Dict[str, Any] = {}
 
     re_symbol = r"[A-Za-z]+"
+    re_op = r"(?:long|short|l|s)"
     re_status = r"(?:portfolio|charging|launched|p|c|l)"
     re_price = r"[0-9.]"
+    re_sctr = r"[0-9.]"
     re_ranks = r"[A-Ea-e]"
     re_earnings = r"\d{8}"
     re_flag = r"(?:true|false|t|f)"
@@ -49,6 +55,12 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
             else:
                 raise ValueError("{}: invalid value".format(key))
 
+        if key == "op":
+            if re.match(re_op, value):
+                struct[key] = value
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
         if key == "status":
             if re.match(re_status, value):
                 struct[key] = value
@@ -58,6 +70,12 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
         if key == "earnings":
             if re.match(re_earnings, value):
                 struct[key] = int(value)
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
+        if key == "sctr":
+            if re.match(re_sctr, value):
+                struct[key] = float(value)
             else:
                 raise ValueError("{}: invalid value".format(key))
 
@@ -73,7 +91,25 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
             else:
                 raise ValueError("{}: invalid value".format(key))
 
-        if key == "value":
+        if key == "acc":
+            if re.match(re_ranks, value):
+                struct[key] = value
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
+        if key == "eps":
+            if re.match(re_ranks, value):
+                struct[key] = value
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
+        if key == "smr":
+            if re.match(re_ranks, value):
+                struct[key] = value
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
+        if key == "comp":
             if re.match(re_ranks, value):
                 struct[key] = value
             else:
@@ -107,6 +143,14 @@ def clean_entity(entity: Dict[str, Any]) -> Dict[str, Any]:
         if key == "price":
             pass
 
+        if key == "op":
+            if value == "l":
+                value = "long"
+            elif value == "s":
+                value = "short"
+
+            entity[key] = value.upper()
+
         if key == "status":
             if value == "p":
                 value = "portfolio"
@@ -120,16 +164,29 @@ def clean_entity(entity: Dict[str, Any]) -> Dict[str, Any]:
         if key == "earnings":
             pass
 
+        if key == "sctr":
+            pass
+
         if key == "grs":
             entity[key] = value.upper()
 
         if key == "rs":
             entity[key] = value.upper()
 
-        if key == "value":
+        if key == "acc":
+            entity[key] = value.upper()
+
+        if key == "eps":
+            entity[key] = value.upper()
+
+        if key == "smr":
+            entity[key] = value.upper()
+
+        if key == "comp":
             entity[key] = value.upper()
 
         if key == "note":
+            value = value.replace("_", " ", -1)
             entity[key] = value.upper()
 
         if key == "flag":

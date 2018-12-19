@@ -90,10 +90,14 @@ class ChartsRename(Pages):
                 daily, weekly))
 
         daily_new = os.path.join(
-            os.path.dirname(daily), "{}_{}_D.png".format(self._date, symbol))
+            os.path.dirname(daily), "{}_{}_D{}".format(
+                self._date, symbol,
+                os.path.splitext(daily)[1]))
 
         weekly_new = os.path.join(
-            os.path.dirname(weekly), "{}_{}_W.png".format(self._date, symbol))
+            os.path.dirname(weekly), "{}_{}_W{}".format(
+                self._date, symbol,
+                os.path.splitext(weekly)[1]))
 
         helper.color_print(
             helper.hex_to_rgb(TerminalColors.paper_light_blue_300),

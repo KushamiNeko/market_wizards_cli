@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Generator
 import re
 import os
 import subprocess
@@ -12,7 +12,7 @@ from context import Context
 
 class IBDParser(Pages):
 
-    _actions = ["parse"]
+    _actions = ["list", "csv"]
 
     _path = ""
 
@@ -22,12 +22,74 @@ class IBDParser(Pages):
 ##############################################################################
 
     def _process_command(self, command: str) -> None:
-        if command == "parse":
-            self._command_parse()
+
+        if command == "list":
+            self._command_list()
+
+        if command == "csv":
+            self._command_csv()
 
 ##############################################################################
 
-    def _command_parse(self) -> None:
+    def _command_list(self) -> None:
+        reader = self._csv_symbols_reader()
+
+        for i, symbol in enumerate(reader):
+            if i == 0:
+                helper.color_print(
+                    helper.hex_to_rgb(TerminalColors.paper_amber_300),
+                    "\nIBD Stocks Lists:\n")
+
+            print(symbol)
+
+        return
+
+##############################################################################
+
+    def _command_csv(self) -> None:
+        reader = self._csv_symbols_reader()
+
+        symbols = set()
+        for symbol in reader:
+            symbols.add(symbol)
+
+        helper.color_print(
+            helper.hex_to_rgb(TerminalColors.paper_amber_300),
+            "\nIBD Stocks Lists:\n")
+
+        print(",".join(symbols))
+
+##############################################################################
+
+    def _csv_symbols_reader(self) -> Generator:
+        csv_files = self._generate_csv()
+
+        for csv_file in csv_files:
+            with open(csv_file, "r", encoding="ISO-8859-1") as csvf:
+                content = csvf.read()
+                strings = content.split("\n")
+
+                printing = False
+
+                for s in strings:
+                    c = s.split(",")
+                    if len(c) >= 1:
+                        symbol = c[0]
+
+                        if symbol == "Symbol":
+                            printing = True
+                            continue
+
+                        if printing and symbol != "":
+                            yield symbol
+
+                        elif printing and symbol == "":
+                            printing = False
+                            break
+
+##############################################################################
+
+    def _generate_csv(self) -> List[str]:
         path = helper.color_input(
             helper.hex_to_rgb(TerminalColors.paper_amber_300),
             "Please enter the folder containing ibd stocks xls files: ")
@@ -69,31 +131,7 @@ class IBDParser(Pages):
 
                 csv_files.append(csv_file)
 
-        helper.color_print(
-            helper.hex_to_rgb(TerminalColors.paper_amber_300),
-            "\nIBD Stocks Lists:\n")
-
-        for csv_file in csv_files:
-            with open(csv_file, "r", encoding="ISO-8859-1") as csvf:
-                content = csvf.read()
-                strings = content.split("\n")
-
-                printing = False
-
-                for s in strings:
-                    c = s.split(",")
-                    if len(c) >= 1:
-                        symbol = c[0]
-
-                        if symbol == "Symbol":
-                            printing = True
-                            continue
-
-                        if printing and symbol != "":
-                            print(symbol)
-                        elif printing and symbol == "":
-                            printing = False
-                            break
+        return csv_files
 
 ##############################################################################
 

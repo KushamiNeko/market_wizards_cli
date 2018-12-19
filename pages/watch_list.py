@@ -15,6 +15,7 @@ class WatchList(Pages):
     _actions = [
         "calc",
         "show",
+        "csv",
         "search",
         "add",
         "edit",
@@ -22,17 +23,24 @@ class WatchList(Pages):
         "clear all",
     ]
 
-    _width = 10
-    _width_l = 15
-    _width_xl = 50
+    _width = 8
+    _width_l = 12
+    _width_xl = 48
     _print_format = (
-        "    " + "{symbol: <6}" + "{price: >{width}}" + "{status: >{width_l}}"
-        + "{grs: >{width}}" + "{rs: >{width}}" + "{value: >{width}}" +
-        "{earnings: >{width_l}}" + "{note: >{width_xl}}")
+        "  " + "{symbol: <6}" + "{price: >{width}}" + "{op: >{width}}" +
+        "{status: >{width_l}}" + "{sctr: >{width}}" + "{grs: >{width}}" +
+        "{rs: >{width}}" + "{acc: >{width}}" + "{eps: >{width}}" +
+        "{smr: >{width}}" + "{comp: >{width}}" + "{earnings: >{width_l}}" +
+        "{note: >{width_xl}}")
+
+    _data_lables = ("SYMBOL", "PRICE", "OP", "STATUS", "EARNINGS", "SCTR",
+                    "GRS", "RS", "ACC", "EPS", "SMR", "COMP", "FLAG", "NOTE")
 
     _database = "--watch-list--"
 
     _color_items_label = config.COLOR_INFO
+
+    _color_items_sub_label = helper.hex_to_rgb(TerminalColors.paper_blue_300)
 
     _color_items_earnings = config.COLOR_WARNINGS
 
@@ -57,6 +65,9 @@ class WatchList(Pages):
 
         if command == "show":
             self._command_show()
+
+        if command == "csv":
+            self._command_csv()
 
         if command == "search":
             self._command_search()
@@ -88,6 +99,27 @@ class WatchList(Pages):
 
 ##############################################################################
 
+    def _command_csv(self) -> None:
+        entities = self.context.database.find(self._database, self.context.uid,
+                                              {})
+
+        if len(entities) == 0:
+            helper.color_print(config.COLOR_WARNINGS,
+                               "No Entities Match The Queries")
+            return
+
+        symbols = set()
+
+        for entity in entities:
+            symbol = entity.get("symbol", "")
+            if symbol:
+                symbols.add(symbol)
+
+        helper.color_print(self._color_items_label, "Watch List CSV:")
+        helper.color_print(self._color_items_general, ",".join(symbols))
+
+##############################################################################
+
     def _show_entities(self, entities: List) -> None:
 
         if len(entities) == 0:
@@ -100,10 +132,15 @@ class WatchList(Pages):
             self._print_format.format(
                 symbol="Symbol",
                 price="Price",
+                op="Op",
                 status="Status",
+                sctr="SCTR",
                 grs="GRS",
                 rs="RS",
-                value="Value",
+                acc="ACC",
+                eps="EPS",
+                smr="SMR",
+                comp="COMP",
                 earnings="Earnings",
                 note="Note",
                 width=self._width,
@@ -119,14 +156,14 @@ class WatchList(Pages):
             if entity.get("flag", False):
                 color = self._color_items_flag
 
-            if entity["status"].lower() == "portfolio":
+            if entity.get("status", "").lower() == "portfolio":
                 if entity.get("flag", False):
                     color = self._color_items_portfolio_flag
                 else:
                     color = self._color_items_portfolio
 
             if entity.get("earnings", "") != "":
-                if helper.days_to_date(entity["earnings"]) < 7:
+                if helper.days_to_date(entity.get("earnings", "")) < 7:
                     color = self._color_items_earnings
 
             helper.color_print(
@@ -134,15 +171,30 @@ class WatchList(Pages):
                 self._print_format.format(
                     symbol=entity.get("symbol", ""),
                     price=entity.get("price", ""),
+                    op=entity.get("op", ""),
                     status=entity.get("status", ""),
+                    sctr=entity.get("sctr", ""),
                     grs=entity.get("grs", ""),
                     rs=entity.get("rs", ""),
-                    value=entity.get("value", ""),
+                    acc=entity.get("acc", ""),
+                    eps=entity.get("eps", ""),
+                    smr=entity.get("smr", ""),
+                    comp=entity.get("comp", ""),
                     earnings=entity.get("earnings", ""),
                     note=entity.get("note", ""),
                     width=self._width,
                     width_l=self._width_l,
                     width_xl=self._width_xl))
+
+        helper.color_print(
+            self._color_items_sub_label, "  (NOTE: {}\n         {})".format(
+                ", ".join([
+                    "(NUM)%=DEPTH", "W=WEEKS", "LF=LOOKING FOR", "B=BREAKING",
+                    "S=SUPPORT", "R=RESISTANCE", "MA=MOVING AVERAGE"
+                ]), ", ".join([
+                    "VC=VOLUME CONTRACTION", "PC=PRICE CONTRACTION",
+                    "VCP=VOLATILITY CONTRACTION PATTERN"
+                ])))
 
 ##############################################################################
 
@@ -152,22 +204,29 @@ class WatchList(Pages):
 
         points = 0
 
-        points += self._sort_entity_status(entity, 1024 * multiplier)
-        points += self._sort_entity_flag(entity, 256 * multiplier)
-        points += self._sort_entity_rank(entity, "grs", 64 * multiplier)
-        points += self._sort_entity_rank(entity, "rs", 16 * multiplier)
-        points += self._sort_entity_rank(entity, "value", 4 * multiplier)
+        points += self._sort_entity_status(entity, (4**6) * multiplier)
+        points += self._sort_entity_flag(entity, (4**5) * multiplier)
+        points += self._sort_entity_rank(entity, "grs", (4**4) * multiplier)
+        points += self._sort_entity_rank(entity, "rs", (4**3) * multiplier)
+        points += self._sort_entity_rank(entity, "eps", (4**2) * multiplier)
+        points += self._sort_entity_rank(entity, "comp", (4**1) * multiplier)
 
         return points
 
 ##############################################################################
 
     def _sort_entity_status(self, entity: Dict, multiplier: int) -> int:
-        if entity["status"].lower() == "portfolio":
+        value = entity.get("status", "")
+        if value != "":
+            value = value.lower()
+        else:
+            return 4 * multiplier
+
+        if value == "portfolio":
             return 1 * multiplier
-        if entity["status"].lower() == "charging":
+        if value == "charging":
             return 2 * multiplier
-        if entity["status"].lower() == "launched":
+        if value == "launched":
             return 3 * multiplier
 
         raise ValueError("_sort_entity_status Should not reach this part")
@@ -184,14 +243,20 @@ class WatchList(Pages):
 
     def _sort_entity_rank(self, entity: Dict, rank: str,
                           multiplier: int) -> int:
-        if entity[rank] == "A":
+        value = entity.get(rank, "")
+        if value == "":
+            return 6 * multiplier
+
+        if value == "A":
             return 1 * multiplier
-        if entity[rank] == "B":
+        if value == "B":
             return 2 * multiplier
-        if entity[rank] == "C":
+        if value == "C":
             return 3 * multiplier
-        if entity[rank] == "D":
+        if value == "D":
             return 4 * multiplier
+        if value == "E":
+            return 5 * multiplier
 
         raise ValueError("_sort_entity_rank Should not reach this part")
 
@@ -217,8 +282,8 @@ class WatchList(Pages):
     def _command_add(self) -> None:
         try:
             q = helper.key_value_input(
-                config.COLOR_INFO, "Please enter your entity " +
-                "(symbol price status earnings grs rs value flag note) ")
+                config.COLOR_INFO, "Please enter your entity " + "({})".format(
+                    " ".join(self._data_lables)))
 
             watchlist.check_necessary_keys(q)
             entity = watchlist.check_values(q)
@@ -251,8 +316,8 @@ class WatchList(Pages):
 
         try:
             new_values = helper.key_value_input(
-                config.COLOR_INFO, "Please enter your entity " +
-                "(symbol price status earnings grs rs value flag note) ")
+                config.COLOR_INFO, "Please enter your entity " + "({})".format(
+                    " ".join(self._data_lables)))
 
             new_values = watchlist.check_values(new_values)
         except ValueError as e:
