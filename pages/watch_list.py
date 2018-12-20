@@ -204,12 +204,13 @@ class WatchList(Pages):
 
         points = 0
 
-        points += self._sort_entity_status(entity, (4**6) * multiplier)
-        points += self._sort_entity_flag(entity, (4**5) * multiplier)
-        points += self._sort_entity_rank(entity, "grs", (4**4) * multiplier)
-        points += self._sort_entity_rank(entity, "rs", (4**3) * multiplier)
-        points += self._sort_entity_rank(entity, "eps", (4**2) * multiplier)
-        points += self._sort_entity_rank(entity, "comp", (4**1) * multiplier)
+        points += self._sort_entity_op(entity, (5**7) * multiplier)
+        points += self._sort_entity_status(entity, (5**6) * multiplier)
+        points += self._sort_entity_flag(entity, (5**5) * multiplier)
+        points += self._sort_entity_rank(entity, "grs", (5**4) * multiplier)
+        points += self._sort_entity_rank(entity, "rs", (5**3) * multiplier)
+        points += self._sort_entity_rank(entity, "eps", (5**2) * multiplier)
+        points += self._sort_entity_rank(entity, "comp", (5**1) * multiplier)
 
         return points
 
@@ -229,7 +230,23 @@ class WatchList(Pages):
         if value == "launched":
             return 3 * multiplier
 
-        raise ValueError("_sort_entity_status Should not reach this part")
+        raise ValueError("_sort_entity_status should not reach this part")
+
+##############################################################################
+
+    def _sort_entity_op(self, entity: Dict, multiplier: int) -> int:
+        value = entity.get("op", "")
+        if value != "":
+            value = value.lower()
+        else:
+            return 3 * multiplier
+
+        if value == "long":
+            return 1 * multiplier
+        if value == "short":
+            return 2 * multiplier
+
+        raise ValueError("_sort_entity_op should not reach this part")
 
 ##############################################################################
 
@@ -258,7 +275,7 @@ class WatchList(Pages):
         if value == "E":
             return 5 * multiplier
 
-        raise ValueError("_sort_entity_rank Should not reach this part")
+        raise ValueError("_sort_entity_rank should not reach this part")
 
 ##############################################################################
 
