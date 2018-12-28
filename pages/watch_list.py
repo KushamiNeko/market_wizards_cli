@@ -3,7 +3,7 @@ from terminal import TerminalColors
 from pages.pages import Pages
 from pages.calculator import Calculator
 from context import Context
-from typing import Dict, List
+from typing import Dict, List, Set
 from data import watchlist
 import config
 
@@ -15,12 +15,14 @@ class WatchList(Pages):
     _actions = [
         "calc",
         "show",
-        "csv",
         "search",
+        # "monitor",
         "add",
         "edit",
         "delete",
         "clear all",
+        "list",
+        "csv",
     ]
 
     _width = 8
@@ -28,13 +30,15 @@ class WatchList(Pages):
     _width_xl = 48
     _print_format = (
         "  " + "{symbol: <6}" + "{price: >{width}}" + "{op: >{width}}" +
-        "{status: >{width_l}}" + "{sctr: >{width}}" + "{grs: >{width}}" +
+        "{status: >{width_l}}" + "{earnings: >{width_l}}" + "{grs: >{width}}" +
         "{rs: >{width}}" + "{acc: >{width}}" + "{eps: >{width}}" +
-        "{smr: >{width}}" + "{comp: >{width}}" + "{earnings: >{width_l}}" +
+        "{smr: >{width}}" + "{comp: >{width}}" + "{sctr: >{width}}" +
         "{note: >{width_xl}}")
 
-    _data_lables = ("SYMBOL", "PRICE", "OP", "STATUS", "EARNINGS", "SCTR",
-                    "GRS", "RS", "ACC", "EPS", "SMR", "COMP", "FLAG", "NOTE")
+    _data_lables = [
+        "SYMBOL", "PRICE", "OP", "STATUS", "EARNINGS", "GRS", "RS", "ACC",
+        "EPS", "SMR", "COMP", "SCTR", "FLAG", "NOTE"
+    ]
 
     _database = "--watch-list--"
 
@@ -66,11 +70,11 @@ class WatchList(Pages):
         if command == "show":
             self._command_show()
 
-        if command == "csv":
-            self._command_csv()
-
         if command == "search":
             self._command_search()
+
+        # if command == "monitor":
+        # self._command_monitor()
 
         if command == "add":
             self._command_add()
@@ -83,6 +87,12 @@ class WatchList(Pages):
 
         if command == "clear all":
             self._command_clear_all()
+
+        if command == "csv":
+            self._command_csv()
+
+        if command == "list":
+            self._command_list()
 
 ##############################################################################
 
@@ -100,6 +110,16 @@ class WatchList(Pages):
 ##############################################################################
 
     def _command_csv(self) -> None:
+        self._generate_list(",")
+
+##############################################################################
+
+    def _command_list(self) -> None:
+        self._generate_list("\n")
+
+##############################################################################
+
+    def _generate_list(self, separator: str) -> None:
         entities = self.context.database.find(self._database, self.context.uid,
                                               {})
 
@@ -108,15 +128,35 @@ class WatchList(Pages):
                                "No Entities Match The Queries")
             return
 
-        symbols = set()
+        symbols_l: Set = set()
+        symbols_s: Set = set()
 
         for entity in entities:
             symbol = entity.get("symbol", "")
-            if symbol:
-                symbols.add(symbol)
+            op = entity.get("op", "").lower()
+            if symbol and op:
+                if op == "long":
+                    symbols_l.add(symbol)
+                elif op == "short":
+                    symbols_s.add(symbol)
 
-        helper.color_print(self._color_items_label, "Watch List CSV:")
-        helper.color_print(self._color_items_general, ",".join(symbols))
+        if (len(symbols_l) + len(symbols_s)) != len(entities):
+            helper.color_print(
+                config.COLOR_WARNINGS,
+                "CSV list missing symbols due to empty symbol or op" + "\n" +
+                "symbols: {}, entities: {}".format(
+                    len(symbols_l) + len(symbols_s), len(entities)))
+
+        helper.color_print(
+            self._color_items_label, "Watch List CSV LONG: {} stocks".format(
+                len(symbols_l)))
+        helper.color_print(self._color_items_general,
+                           separator.join(symbols_l))
+        helper.color_print(
+            self._color_items_label, "Watch List CSV SHORT: {} stocks".format(
+                len(symbols_s)))
+        helper.color_print(self._color_items_general,
+                           separator.join(symbols_s))
 
 ##############################################################################
 
@@ -134,14 +174,14 @@ class WatchList(Pages):
                 price="Price",
                 op="Op",
                 status="Status",
-                sctr="SCTR",
+                earnings="Earnings",
                 grs="GRS",
                 rs="RS",
                 acc="ACC",
                 eps="EPS",
                 smr="SMR",
                 comp="COMP",
-                earnings="Earnings",
+                sctr="SCTR",
                 note="Note",
                 width=self._width,
                 width_l=self._width_l,
@@ -173,14 +213,14 @@ class WatchList(Pages):
                     price=entity.get("price", ""),
                     op=entity.get("op", ""),
                     status=entity.get("status", ""),
-                    sctr=entity.get("sctr", ""),
+                    earnings=entity.get("earnings", ""),
                     grs=entity.get("grs", ""),
                     rs=entity.get("rs", ""),
                     acc=entity.get("acc", ""),
                     eps=entity.get("eps", ""),
                     smr=entity.get("smr", ""),
                     comp=entity.get("comp", ""),
-                    earnings=entity.get("earnings", ""),
+                    sctr=entity.get("sctr", ""),
                     note=entity.get("note", ""),
                     width=self._width,
                     width_l=self._width_l,
@@ -189,11 +229,13 @@ class WatchList(Pages):
         helper.color_print(
             self._color_items_sub_label, "  (NOTE: {}\n         {})".format(
                 ", ".join([
-                    "(NUM)%=DEPTH", "W=WEEKS", "LF=LOOKING FOR", "B=BREAKING",
-                    "S=SUPPORT", "R=RESISTANCE", "MA=MOVING AVERAGE"
+                    "NUM%=DEPTH", "W=WEEKS", "LF=LOOKING FOR",
+                    "B=BREAKING UP/DOWN", "S=SUPPORT", "R=RESISTANCE",
+                    "MA=MOVING AVERAGE"
                 ]), ", ".join([
                     "VC=VOLUME CONTRACTION", "PC=PRICE CONTRACTION",
-                    "VCP=VOLATILITY CONTRACTION PATTERN"
+                    "VCP=VOLATILITY CONTRACTION PATTERN", "OP=OPEN POINT",
+                    "SP=STOP POINT"
                 ])))
 
 ##############################################################################
@@ -209,8 +251,8 @@ class WatchList(Pages):
         points += self._sort_entity_flag(entity, (5**5) * multiplier)
         points += self._sort_entity_rank(entity, "grs", (5**4) * multiplier)
         points += self._sort_entity_rank(entity, "rs", (5**3) * multiplier)
-        points += self._sort_entity_rank(entity, "eps", (5**2) * multiplier)
-        points += self._sort_entity_rank(entity, "comp", (5**1) * multiplier)
+        # points += self._sort_entity_int(entity, "eps", (5**2) * multiplier)
+        # points += self._sort_entity_rank(entity, "smr", (5**1) * multiplier)
 
         return points
 
@@ -221,7 +263,7 @@ class WatchList(Pages):
         if value != "":
             value = value.lower()
         else:
-            return 4 * multiplier
+            return 5 * multiplier
 
         if value == "portfolio":
             return 1 * multiplier
@@ -229,6 +271,8 @@ class WatchList(Pages):
             return 2 * multiplier
         if value == "launched":
             return 3 * multiplier
+        if value == "repairing":
+            return 4 * multiplier
 
         raise ValueError("_sort_entity_status should not reach this part")
 
@@ -246,6 +290,8 @@ class WatchList(Pages):
         if value == "short":
             return 2 * multiplier
 
+        print(entity)
+
         raise ValueError("_sort_entity_op should not reach this part")
 
 ##############################################################################
@@ -255,6 +301,17 @@ class WatchList(Pages):
             return 1 * multiplier
         else:
             return 2 * multiplier
+
+##############################################################################
+
+    def _sort_entity_int(self,
+                         entity: Dict,
+                         label: str,
+                         multiplier: int,
+                         maximum: int = 100) -> int:
+
+        value = entity.get(label, 0)
+        return (maximum - value) * multiplier
 
 ##############################################################################
 

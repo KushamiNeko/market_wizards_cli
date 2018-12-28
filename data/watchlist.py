@@ -9,7 +9,7 @@ def check_necessary_keys(entity: Dict[str, Any]) -> None:
     # "symbol", "op", "status", "sctr", "grs", "rs", "acc", "eps", "smr",
     # "comp"
     # ]
-    necessary = ["symbol", "op", "status"]
+    necessary = ["symbol", "op"]
     # unnecessary = ["price", "earnings", "note", "flag"]
 
     for key in necessary:
@@ -31,14 +31,16 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
 
     struct: Dict[str, Any] = {}
 
-    re_symbol = r"[A-Za-z]+"
-    re_op = r"(?:long|short|l|s)"
-    re_status = r"(?:portfolio|charging|launched|p|c|l)"
-    re_price = r"[0-9.]"
-    re_sctr = r"[0-9.]"
-    re_ranks = r"[A-Ea-e]"
-    re_earnings = r"\d{8}"
-    re_flag = r"(?:true|false|t|f)"
+    re_symbol = r"^[A-Za-z]+$"
+    re_op = r"^(?:long|short|l|s)$"
+    re_status = r"^(?:portfolio|repairing|charging|launched|p|r|c|l)$"
+
+    re_int = r"^[0-9]+$"
+    re_float = r"^[0-9.]+$"
+    re_bool = r"^(?:true|false|t|f)$"
+
+    re_date = r"^\d{8}$"
+    re_ranks = r"^[A-Ea-e]$"
 
     for key in entity:
         value = entity[key].strip()
@@ -50,7 +52,7 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
                 raise ValueError("{}: invalid value".format(key))
 
         if key == "price":
-            if re.match(re_price, value):
+            if re.match(re_float, value):
                 struct[key] = float(value)
             else:
                 raise ValueError("{}: invalid value".format(key))
@@ -68,13 +70,13 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
                 raise ValueError("{}: invalid value".format(key))
 
         if key == "earnings":
-            if re.match(re_earnings, value):
+            if re.match(re_date, value):
                 struct[key] = int(value)
             else:
                 raise ValueError("{}: invalid value".format(key))
 
         if key == "sctr":
-            if re.match(re_sctr, value):
+            if re.match(re_float, value):
                 struct[key] = float(value)
             else:
                 raise ValueError("{}: invalid value".format(key))
@@ -119,7 +121,7 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
             struct[key] = value
 
         if key == "flag":
-            if re.match(re_flag, value):
+            if re.match(re_bool, value):
                 struct[key] = value
             else:
                 raise ValueError("{}: invalid value".format(key))
@@ -154,6 +156,8 @@ def clean_entity(entity: Dict[str, Any]) -> Dict[str, Any]:
         if key == "status":
             if value == "p":
                 value = "portfolio"
+            if value == "r":
+                value = "repairing"
             if value == "c":
                 value = "charging"
             if value == "l":

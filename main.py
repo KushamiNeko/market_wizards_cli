@@ -1,15 +1,56 @@
-import bcrypt
-import getpass
 import base64
+import getpass
+from typing import Callable, Any
 
+import bcrypt
+import helper
+import config
 from mongo import MongoInterface
+from context import Context
 from pages.watch_list import WatchList
 from pages.calculator import Calculator
 from pages.charts_rename import ChartsRename
-from pages.ibd_parser import IBDParser
-from context import Context
-import helper
-import config
+from pages.ibd_stock_lists import IBDStockListsParser
+from pages.ibd_data_tables import IBDDataTablesParser
+
+##############################################################################
+
+
+def login(database: MongoInterface, email: str, password: bytes) -> str:
+
+    # helper.color_print(config.COLOR_INFO,
+    # "Welcom to Market Wizards command line interface")
+
+    # email = input("email: ")
+    # password = getpass.getpass("password: ").encode("utf-8")
+
+    user = database.find_one(
+        database="--admin--",
+        collection="--user--",
+        queries={
+            "email": email,
+        })
+
+    if user is not None and bcrypt.checkpw(password,
+                                           base64.b64decode(user["password"])):
+        # return True
+        UID = user["uid"]
+        return UID
+    else:
+        return ""
+        # return False
+
+        # helper.color_print(config.COLOR_INFO, "Successful!!!")
+
+        # UID = user["uid"]
+
+        # CONTEXT.set_uid(UID)
+
+        # _main_loop(CONTEXT)
+
+        # helper.color_print(config.COLOR_INFO,
+        # "Thank you for using Market Wizards!!!")
+
 
 ##############################################################################
 
@@ -23,7 +64,8 @@ def _main_loop(context: Context) -> None:
         "new transactions",
         "statistic",
         "charts rename",
-        "ibd parser",
+        "ibd stock lists",
+        "ibd data tables",
         "exit",
     ]
 
@@ -52,9 +94,13 @@ def _main_loop(context: Context) -> None:
             rename = ChartsRename(context)
             rename.main_loop()
 
-        if page == "ibd parser":
-            parser = IBDParser(context)
-            parser.main_loop()
+        if page == "ibd stock lists":
+            stock_lists_parser = IBDStockListsParser(context)
+            stock_lists_parser.main_loop()
+
+        if page == "ibd data tables":
+            data_tables_parser = IBDDataTablesParser(context)
+            data_tables_parser.main_loop()
 
 
 ##############################################################################
@@ -74,19 +120,21 @@ if __name__ == "__main__":
     email = input("email: ")
     password = getpass.getpass("password: ").encode("utf-8")
 
-    user = MONGO.find_one(
-        database="--admin--",
-        collection="--user--",
-        queries={
-            "email": email,
-        })
+    # user = MONGO.find_one(
+    # database="--admin--",
+    # collection="--user--",
+    # queries={
+    # "email": email,
+    # })
 
-    if user is not None and bcrypt.checkpw(password,
-                                           base64.b64decode(user["password"])):
+    # if user is not None and bcrypt.checkpw(password,
+    # base64.b64decode(user["password"])):
+    UID = login(MONGO, email, password)
+    if UID:
 
         helper.color_print(config.COLOR_INFO, "Successful!!!")
 
-        UID = user["uid"]
+        # UID = user["uid"]
 
         CONTEXT.set_uid(UID)
 

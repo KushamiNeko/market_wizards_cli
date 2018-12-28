@@ -1,6 +1,7 @@
 import helper
 from pages.pages import Pages
 from context import Context
+from data import watchlist
 import re
 import config
 
@@ -29,15 +30,20 @@ class Calculator(Pages):
     def _command_stop(self) -> None:
         try:
             q = helper.key_value_input(config.COLOR_INFO,
-                                       "What is the price ? ")
+                                       "What are the PRICE and OP ? ")
         except ValueError as e:
             helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
             return
 
+        q = watchlist.clean_entity(q)
+
         if "price" not in q:
             helper.color_print(config.COLOR_WARNINGS, "No price value")
+        if "op" not in q:
+            helper.color_print(config.COLOR_WARNINGS, "No op value")
         else:
             value = q["price"]
+            op = q["op"]
             if re.match(r"[0-9.]+", value):
                 price = float(value)
 
@@ -49,9 +55,18 @@ class Calculator(Pages):
                     if i <= -7:
                         color = config.COLOR_WARNINGS
 
-                    helper.color_print(
-                        color, "Stop {0: >2}%: {1: >4,.2f} $".format(
-                            i, price * (1.0 + percent)))
+                    if op == "LONG":
+                        helper.color_print(
+                            color, "Stop {0: >2}%: {1: >4,.2f} $".format(
+                                i, price * (1.0 + percent)))
+                    elif op == "SHORT":
+                        helper.color_print(
+                            color, "Stop {0: >2}%: {1: >4,.2f} $".format(
+                                i, price * (1.0 - percent)))
+                    else:
+                        helper.color_print(config.COLOR_WARNINGS,
+                                           "Invalid OP Value")
+                        return
 
             else:
                 helper.color_print(config.COLOR_WARNINGS, "invalid price")

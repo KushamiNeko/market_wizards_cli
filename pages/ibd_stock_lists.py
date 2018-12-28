@@ -1,7 +1,7 @@
-from typing import Dict, List, Generator
-import re
+from typing import List, Generator, Set
 import os
 import subprocess
+import config
 import helper
 from terminal import TerminalColors
 from pages.pages import Pages
@@ -10,14 +10,14 @@ from context import Context
 ##############################################################################
 
 
-class IBDParser(Pages):
+class IBDStockListsParser(Pages):
 
     _actions = ["list", "csv"]
 
     _path = ""
 
     def __init__(self, context: Context) -> None:
-        super(IBDParser, self).__init__(context)
+        super(IBDStockListsParser, self).__init__(context)
 
 ##############################################################################
 
@@ -32,21 +32,16 @@ class IBDParser(Pages):
 ##############################################################################
 
     def _command_list(self) -> None:
-        reader = self._csv_symbols_reader()
-
-        for i, symbol in enumerate(reader):
-            if i == 0:
-                helper.color_print(
-                    helper.hex_to_rgb(TerminalColors.paper_amber_300),
-                    "\nIBD Stocks Lists:\n")
-
-            print(symbol)
-
-        return
+        self._generate_list("\n")
 
 ##############################################################################
 
     def _command_csv(self) -> None:
+        self._generate_list(",")
+
+##############################################################################
+
+    def _generate_list(self, separator: str) -> None:
         reader = self._csv_symbols_reader()
 
         symbols = set()
@@ -55,9 +50,9 @@ class IBDParser(Pages):
 
         helper.color_print(
             helper.hex_to_rgb(TerminalColors.paper_amber_300),
-            "\nIBD Stocks Lists:\n")
+            "\nIBD Stocks Lists: {} stocks\n".format(len(symbols)))
 
-        print(",".join(symbols))
+        helper.color_print(config.COLOR_WHITE, separator.join(symbols))
 
 ##############################################################################
 

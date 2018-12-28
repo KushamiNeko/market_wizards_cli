@@ -57,6 +57,10 @@ def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict[str, str]:
 def days_to_date(date: int) -> int:
     now = int(datetime.datetime.now().strftime("%Y%m%d"))
     days = date - now
+
+    if days < 0:
+        days = 0
+
     return days
 
 
