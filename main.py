@@ -9,20 +9,16 @@ from mongo import MongoInterface
 from context import Context
 from pages.watch_list import WatchList
 from pages.calculator import Calculator
-from pages.charts_rename import ChartsRename
-from pages.ibd_stock_lists import IBDStockListsParser
-from pages.ibd_data_tables import IBDDataTablesParser
+from pages.scan_organizer import ScanOrganizer
+
+# from pages.charts_rename import ChartsRename
+# from pages.ibd_stock_lists import IBDStockListsParser
+# from pages.ibd_data_tables import IBDDataTablesParser
 
 ##############################################################################
 
 
 def login(database: MongoInterface, email: str, password: bytes) -> str:
-
-    # helper.color_print(config.COLOR_INFO,
-    # "Welcom to Market Wizards command line interface")
-
-    # email = input("email: ")
-    # password = getpass.getpass("password: ").encode("utf-8")
 
     user = database.find_one(
         database="--admin--",
@@ -33,23 +29,10 @@ def login(database: MongoInterface, email: str, password: bytes) -> str:
 
     if user is not None and bcrypt.checkpw(password,
                                            base64.b64decode(user["password"])):
-        # return True
         UID = user["uid"]
         return UID
     else:
-        return ""
-        # return False
-
-        # helper.color_print(config.COLOR_INFO, "Successful!!!")
-
-        # UID = user["uid"]
-
-        # CONTEXT.set_uid(UID)
-
-        # _main_loop(CONTEXT)
-
-        # helper.color_print(config.COLOR_INFO,
-        # "Thank you for using Market Wizards!!!")
+        raise ValueError("Invalid User or Password")
 
 
 ##############################################################################
@@ -58,14 +41,15 @@ def login(database: MongoInterface, email: str, password: bytes) -> str:
 def _main_loop(context: Context) -> None:
 
     PAGES = [
-        "calc",
+        "scan organize",
+        "calculator",
         "watch list",
-        "transactions",
-        "new transactions",
+        "trades",
+        "new trade",
         "statistic",
-        "charts rename",
-        "ibd stock lists",
-        "ibd data tables",
+        # "charts rename",
+        # "ibd stock lists",
+        # "ibd data tables",
         "exit",
     ]
 
@@ -82,7 +66,11 @@ def _main_loop(context: Context) -> None:
         if page == "exit":
             break
 
-        if page == "calc":
+        if page == "scan organize":
+            scan_split = ScanOrganizer(context)
+            scan_split.main_loop()
+
+        if page == "calculator":
             calculator = Calculator(context)
             calculator.main_loop()
 
@@ -90,17 +78,17 @@ def _main_loop(context: Context) -> None:
             watchlist = WatchList(context)
             watchlist.main_loop()
 
-        if page == "charts rename":
-            rename = ChartsRename(context)
-            rename.main_loop()
+        # if page == "charts rename":
+        # rename = ChartsRename(context)
+        # rename.main_loop()
 
-        if page == "ibd stock lists":
-            stock_lists_parser = IBDStockListsParser(context)
-            stock_lists_parser.main_loop()
+        # if page == "ibd stock lists":
+        # stock_lists_parser = IBDStockListsParser(context)
+        # stock_lists_parser.main_loop()
 
-        if page == "ibd data tables":
-            data_tables_parser = IBDDataTablesParser(context)
-            data_tables_parser.main_loop()
+        # if page == "ibd data tables":
+        # data_tables_parser = IBDDataTablesParser(context)
+        # data_tables_parser.main_loop()
 
 
 ##############################################################################
@@ -120,21 +108,9 @@ if __name__ == "__main__":
     email = input("email: ")
     password = getpass.getpass("password: ").encode("utf-8")
 
-    # user = MONGO.find_one(
-    # database="--admin--",
-    # collection="--user--",
-    # queries={
-    # "email": email,
-    # })
-
-    # if user is not None and bcrypt.checkpw(password,
-    # base64.b64decode(user["password"])):
-    UID = login(MONGO, email, password)
-    if UID:
-
+    try:
+        UID = login(MONGO, email, password)
         helper.color_print(config.COLOR_INFO, "Successful!!!")
-
-        # UID = user["uid"]
 
         CONTEXT.set_uid(UID)
 
@@ -142,8 +118,7 @@ if __name__ == "__main__":
 
         helper.color_print(config.COLOR_INFO,
                            "Thank you for using Market Wizards!!!")
-
-    else:
-        helper.color_print(config.COLOR_WARNINGS, "Email or Password Error")
+    except Exception as err:
+        helper.color_print(config.COLOR_WARNINGS, str(err))
 
 ##############################################################################

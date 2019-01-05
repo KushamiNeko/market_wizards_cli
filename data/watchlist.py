@@ -9,7 +9,7 @@ def check_necessary_keys(entity: Dict[str, Any]) -> None:
     # "symbol", "op", "status", "sctr", "grs", "rs", "acc", "eps", "smr",
     # "comp"
     # ]
-    necessary = ["symbol", "op"]
+    necessary = ["symbol", "op", "status"]
     # unnecessary = ["price", "earnings", "note", "flag"]
 
     for key in necessary:
@@ -37,6 +37,7 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
 
     re_int = r"^[0-9]+$"
     re_float = r"^[0-9.]+$"
+    re_float_range = r"^[0-9.]+~[0-9.]+$"
     re_bool = r"^(?:true|false|t|f)$"
 
     re_date = r"^\d{8}$"
@@ -48,12 +49,6 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
         if key == "symbol":
             if re.match(re_symbol, value):
                 struct[key] = value
-            else:
-                raise ValueError("{}: invalid value".format(key))
-
-        if key == "price":
-            if re.match(re_float, value):
-                struct[key] = float(value)
             else:
                 raise ValueError("{}: invalid value".format(key))
 
@@ -75,11 +70,20 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
             else:
                 raise ValueError("{}: invalid value".format(key))
 
-        if key == "sctr":
-            if re.match(re_float, value):
+        if key == "price":
+            if re.match(re_float_range, value):
                 struct[key] = float(value)
             else:
                 raise ValueError("{}: invalid value".format(key))
+
+        if key == "stop":
+            if re.match(re_float_range, value):
+                struct[key] = float(value)
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
+        if key == "note":
+            struct[key] = value
 
         if key == "grs":
             if re.match(re_ranks, value):
@@ -88,7 +92,7 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
                 raise ValueError("{}: invalid value".format(key))
 
         if key == "rs":
-            if re.match(re_ranks, value):
+            if re.match(re_int, value):
                 struct[key] = value
             else:
                 raise ValueError("{}: invalid value".format(key))
@@ -99,8 +103,14 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
             else:
                 raise ValueError("{}: invalid value".format(key))
 
+        if key == "sctr":
+            if re.match(re_float, value):
+                struct[key] = float(value)
+            else:
+                raise ValueError("{}: invalid value".format(key))
+
         if key == "eps":
-            if re.match(re_ranks, value):
+            if re.match(re_int, value):
                 struct[key] = value
             else:
                 raise ValueError("{}: invalid value".format(key))
@@ -112,13 +122,10 @@ def check_values(entity: Dict[str, str]) -> Dict[str, Any]:
                 raise ValueError("{}: invalid value".format(key))
 
         if key == "comp":
-            if re.match(re_ranks, value):
+            if re.match(re_int, value):
                 struct[key] = value
             else:
                 raise ValueError("{}: invalid value".format(key))
-
-        if key == "note":
-            struct[key] = value
 
         if key == "flag":
             if re.match(re_bool, value):

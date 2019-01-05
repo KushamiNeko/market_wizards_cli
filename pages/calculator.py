@@ -10,7 +10,10 @@ import config
 
 class Calculator(Pages):
 
-    _actions = ["stop", "depth"]
+    _actions = [
+        "stop",
+        "depth",
+    ]
 
     def __init__(self, context: Context) -> None:
         super(Calculator, self).__init__(context)

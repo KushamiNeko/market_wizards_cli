@@ -10,7 +10,10 @@ class Pages():
 
     context: Context = None
 
-    _base_actions: List[str] = ["back", "exit"]
+    _base_actions: List[str] = [
+        "back",
+        "exit",
+    ]
     _actions: List[str] = []
 
     def __init__(self, context: Context) -> None:

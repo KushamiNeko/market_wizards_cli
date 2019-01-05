@@ -29,30 +29,30 @@ class TestMain(unittest.TestCase):
     def test_login_empty(self):
         email = ""
         password = "".encode("utf-8")
-        uid = main.login(self.MONGO, email, password)
 
-        self.assertEqual(uid, "")
+        with self.assertRaises(ValueError):
+            main.login(self.MONGO, email, password)
 
     def test_login_wrong_email(self):
         email = "wrong"
         password = "aa".encode("utf-8")
-        uid = main.login(self.MONGO, email, password)
 
-        self.assertEqual(uid, "")
+        with self.assertRaises(ValueError):
+            main.login(self.MONGO, email, password)
 
     def test_login_wrong_password(self):
         email = "aa"
         password = "wrong".encode("utf-8")
-        uid = main.login(self.MONGO, email, password)
 
-        self.assertEqual(uid, "")
+        with self.assertRaises(ValueError):
+            main.login(self.MONGO, email, password)
 
     def test_login_wrong_both(self):
         email = "wrong"
         password = "wrong".encode("utf-8")
-        uid = main.login(self.MONGO, email, password)
 
-        self.assertEqual(uid, "")
+        with self.assertRaises(ValueError):
+            main.login(self.MONGO, email, password)
 
 
 ##############################################################################

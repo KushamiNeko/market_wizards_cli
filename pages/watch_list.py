@@ -1,6 +1,7 @@
 import helper
 from terminal import TerminalColors
 from pages.pages import Pages
+from pages.helper import HelperPrintList
 from pages.calculator import Calculator
 from context import Context
 from typing import Dict, List, Set
@@ -10,34 +11,66 @@ import config
 ##############################################################################
 
 
-class WatchList(Pages):
+class WatchList(Pages, HelperPrintList):
 
     _actions = [
         "calc",
         "show",
-        "search",
-        # "monitor",
+        "find",
         "add",
         "edit",
         "delete",
         "clear all",
-        "list",
-        "csv",
+        "print csv",
+        "print list",
     ]
 
     _width = 8
     _width_l = 12
-    _width_xl = 48
-    _print_format = (
-        "  " + "{symbol: <6}" + "{price: >{width}}" + "{op: >{width}}" +
-        "{status: >{width_l}}" + "{earnings: >{width_l}}" + "{grs: >{width}}" +
-        "{rs: >{width}}" + "{acc: >{width}}" + "{eps: >{width}}" +
-        "{smr: >{width}}" + "{comp: >{width}}" + "{sctr: >{width}}" +
-        "{note: >{width_xl}}")
+    _width_xl = 36
+    # _print_format = (
+    # "  " + "{symbol: <6}" + "{price: >{width}}" + "{op: >{width}}" +
+    # "{status: >{width_l}}" + "{earnings: >{width_l}}" + "{grs: >{width}}" +
+    # "{rs: >{width}}" + "{acc: >{width}}" + "{eps: >{width}}" +
+    # "{smr: >{width}}" + "{comp: >{width}}" + "{sctr: >{width}}" +
+    # "{note: >{width_xl}}")
+
+    _print_format = "".join([
+        "  ",
+        "{symbol: <6}",
+        "{op: >{width}}",
+        "{status: >{width_l}}",
+        "{earnings: >{width_l}}",
+        "{price: >{width_l}}",
+        "{stop: >{width_l}}",
+        "{loss: >{width_l}}",
+        "{note: >{width_xl}}",
+        "{grs: >{width}}",
+        "{rs: >{width}}",
+        "{acc: >{width}}",
+        "{sctr: >{width}}",
+        "{eps: >{width}}",
+        "{smr: >{width}}",
+        "{comp: >{width}}",
+    ])
 
     _data_lables = [
-        "SYMBOL", "PRICE", "OP", "STATUS", "EARNINGS", "GRS", "RS", "ACC",
-        "EPS", "SMR", "COMP", "SCTR", "FLAG", "NOTE"
+        "SYMBOL",
+        "OP",
+        "STATUS",
+        "EARNINGS",
+        "PRICE",
+        "STOP",
+        "LOSS",
+        "NOTE",
+        "GRS",
+        "RS",
+        "ACC",
+        "SCTR",
+        "EPS",
+        "SMR",
+        "COMP",
+        "FLAG",
     ]
 
     _database = "--watch-list--"
@@ -70,8 +103,8 @@ class WatchList(Pages):
         if command == "show":
             self._command_show()
 
-        if command == "search":
-            self._command_search()
+        if command == "find":
+            self._command_find()
 
         # if command == "monitor":
         # self._command_monitor()
@@ -88,11 +121,11 @@ class WatchList(Pages):
         if command == "clear all":
             self._command_clear_all()
 
-        if command == "csv":
-            self._command_csv()
+        if command == "print csv":
+            self._command_print_csv()
 
-        if command == "list":
-            self._command_list()
+        if command == "print list":
+            self._command_print_list()
 
 ##############################################################################
 
@@ -106,16 +139,6 @@ class WatchList(Pages):
             return
 
         self._show_entities(entities)
-
-##############################################################################
-
-    def _command_csv(self) -> None:
-        self._generate_list(",")
-
-##############################################################################
-
-    def _command_list(self) -> None:
-        self._generate_list("\n")
 
 ##############################################################################
 
@@ -150,11 +173,14 @@ class WatchList(Pages):
         helper.color_print(
             self._color_items_label, "Watch List CSV LONG: {} stocks".format(
                 len(symbols_l)))
+
         helper.color_print(self._color_items_general,
                            separator.join(symbols_l))
+
         helper.color_print(
             self._color_items_label, "Watch List CSV SHORT: {} stocks".format(
                 len(symbols_s)))
+
         helper.color_print(self._color_items_general,
                            separator.join(symbols_s))
 
@@ -171,18 +197,20 @@ class WatchList(Pages):
             self._color_items_label,
             self._print_format.format(
                 symbol="Symbol",
-                price="Price",
                 op="Op",
                 status="Status",
                 earnings="Earnings",
+                price="Price",
+                stop="Stop",
+                loss="Loss",
+                note="Note",
                 grs="GRS",
                 rs="RS",
                 acc="ACC",
+                sctr="SCTR",
                 eps="EPS",
                 smr="SMR",
                 comp="COMP",
-                sctr="SCTR",
-                note="Note",
                 width=self._width,
                 width_l=self._width_l,
                 width_xl=self._width_xl))
@@ -210,18 +238,20 @@ class WatchList(Pages):
                 color,
                 self._print_format.format(
                     symbol=entity.get("symbol", ""),
-                    price=entity.get("price", ""),
                     op=entity.get("op", ""),
                     status=entity.get("status", ""),
                     earnings=entity.get("earnings", ""),
+                    price=entity.get("price", ""),
+                    stop=entity.get("stop", ""),
+                    loss=entity.get("loss", ""),
+                    note=entity.get("note", ""),
                     grs=entity.get("grs", ""),
                     rs=entity.get("rs", ""),
                     acc=entity.get("acc", ""),
+                    sctr=entity.get("sctr", ""),
                     eps=entity.get("eps", ""),
                     smr=entity.get("smr", ""),
                     comp=entity.get("comp", ""),
-                    sctr=entity.get("sctr", ""),
-                    note=entity.get("note", ""),
                     width=self._width,
                     width_l=self._width_l,
                     width_xl=self._width_xl))
@@ -229,13 +259,19 @@ class WatchList(Pages):
         helper.color_print(
             self._color_items_sub_label, "  (NOTE: {}\n         {})".format(
                 ", ".join([
-                    "NUM%=DEPTH", "W=WEEKS", "LF=LOOKING FOR",
-                    "B=BREAKING UP/DOWN", "S=SUPPORT", "R=RESISTANCE",
-                    "MA=MOVING AVERAGE"
+                    "NUM%=DEPTH",
+                    "W=WEEKS",
+                    "LF=LOOKING FOR",
+                    "B=BREAKING UP/DOWN",
+                    "S=SUPPORT",
+                    "R=RESISTANCE",
+                    "MA=MOVING AVERAGE",
                 ]), ", ".join([
-                    "VC=VOLUME CONTRACTION", "PC=PRICE CONTRACTION",
-                    "VCP=VOLATILITY CONTRACTION PATTERN", "OP=OPEN POINT",
-                    "SP=STOP POINT"
+                    "VC=VOLUME CONTRACTION",
+                    "PC=PRICE CONTRACTION",
+                    "VCP=VOLATILITY CONTRACTION PATTERN",
+                    "OP=OPEN POINT",
+                    "SP=STOP POINT",
                 ])))
 
 ##############################################################################
@@ -251,8 +287,7 @@ class WatchList(Pages):
         points += self._sort_entity_flag(entity, (5**5) * multiplier)
         points += self._sort_entity_rank(entity, "grs", (5**4) * multiplier)
         points += self._sort_entity_rank(entity, "rs", (5**3) * multiplier)
-        # points += self._sort_entity_int(entity, "eps", (5**2) * multiplier)
-        # points += self._sort_entity_rank(entity, "smr", (5**1) * multiplier)
+        points += self._sort_entity_rank(entity, "acc", (5**2) * multiplier)
 
         return points
 
@@ -336,7 +371,7 @@ class WatchList(Pages):
 
 ##############################################################################
 
-    def _command_search(self) -> None:
+    def _command_find(self) -> None:
         try:
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What do you want to search? ")
