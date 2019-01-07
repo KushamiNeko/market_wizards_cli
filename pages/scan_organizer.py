@@ -9,26 +9,42 @@ import config
 import helper
 from terminal import TerminalColors
 from pages.pages import Pages
-from pages.helper import HelperPrintList
 from context import Context
 
 ##############################################################################
 
 
-class ScanOrganizer(Pages, HelperPrintList):
+class ScanOrganizer():
 
     _actions = [
         "ibd stock lists",
         "ibd data tables",
         "stock charts scans",
         "print csv",
-        "print list",
+        # "print list",
     ]
 
     def __init__(self, context: Context) -> None:
-        super(ScanOrganizer, self).__init__(context)
+        self.context = context
 
         self._stocks_list: Set[str] = set()
+
+        self._page = Pages(self._actions)
+
+##############################################################################
+
+    def main_loop(self) -> None:
+        while True:
+            try:
+                command = self._page.action_command()
+            except ValueError:
+                continue
+
+            self._process_command(command)
+            self._page.process_command(command)
+
+            if self._page.change:
+                break
 
 ##############################################################################
 
@@ -38,8 +54,8 @@ class ScanOrganizer(Pages, HelperPrintList):
             "ibd stock lists": self._command_ibd_stock_lists,
             "ibd data tables": self._command_ibd_data_tables,
             "stock charts scans": self._command_stock_charts_scans,
-            "print list": self._command_print_list,
             "print csv": self._command_print_csv,
+            # "print list": self._command_print_list,
         }
 
         response = responses.get(command, None)
@@ -91,6 +107,16 @@ class ScanOrganizer(Pages, HelperPrintList):
 
             helper.color_print(config.COLOR_WHITE, separator.join(symbols))
 
+##############################################################################
+
+    def _command_print_csv(self) -> None:
+        self._generate_list(",")
+
+##############################################################################
+
+    def _command_print_list(self) -> None:
+        self._generate_list("\n")
+
 
 ##############################################################################
 
@@ -115,6 +141,7 @@ class _IBDStockListsParser():
 
             for symbol in symbols:
                 yield symbol
+
         except ValueError as err:
             helper.color_print(
                 helper.hex_to_rgb(TerminalColors.paper_red_500), str(err))
@@ -212,7 +239,6 @@ class _IBDStockListsParser():
 
 class _IBDDataTablesParser():
 
-    # _regex = r"<(?:td|TD)>\s*([A-Z]+)\s*</(?:td|TD)>"
     _regex = r'<(?:td|TD)>(?:\s*<font\s*size="\d+">\s*)?\s*([A-Z]+)(?:/\s*[A-Z]+)?(?:\s*</font>\s*)?\s*</(?:td|TD)>'
 
     def __init__(self) -> None:

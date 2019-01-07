@@ -10,10 +10,7 @@ from context import Context
 from pages.watch_list import WatchList
 from pages.calculator import Calculator
 from pages.scan_organizer import ScanOrganizer
-
-# from pages.charts_rename import ChartsRename
-# from pages.ibd_stock_lists import IBDStockListsParser
-# from pages.ibd_data_tables import IBDDataTablesParser
+from pages.pages import Pages
 
 ##############################################################################
 
@@ -47,9 +44,6 @@ def _main_loop(context: Context) -> None:
         "trades",
         "new trade",
         "statistic",
-        # "charts rename",
-        # "ibd stock lists",
-        # "ibd data tables",
         "exit",
     ]
 
@@ -77,18 +71,6 @@ def _main_loop(context: Context) -> None:
         if page == "watch list":
             watchlist = WatchList(context)
             watchlist.main_loop()
-
-        # if page == "charts rename":
-        # rename = ChartsRename(context)
-        # rename.main_loop()
-
-        # if page == "ibd stock lists":
-        # stock_lists_parser = IBDStockListsParser(context)
-        # stock_lists_parser.main_loop()
-
-        # if page == "ibd data tables":
-        # data_tables_parser = IBDDataTablesParser(context)
-        # data_tables_parser.main_loop()
 
 
 ##############################################################################

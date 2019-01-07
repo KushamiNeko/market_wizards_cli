@@ -1,14 +1,15 @@
+from typing import Dict
 import helper
 from pages.pages import Pages
 from context import Context
-from data import watchlist
+from data.watch_list import WatchListItem
 import re
 import config
 
 ##############################################################################
 
 
-class Calculator(Pages):
+class Calculator():
 
     _actions = [
         "stop",
@@ -16,17 +17,36 @@ class Calculator(Pages):
     ]
 
     def __init__(self, context: Context) -> None:
-        super(Calculator, self).__init__(context)
+        self.context = context
+
+        self._page = Pages(self._actions)
+
+##############################################################################
+
+    def main_loop(self) -> None:
+        while True:
+            try:
+                command = self._page.action_command()
+            except ValueError:
+                continue
+
+            self._process_command(command)
+            self._page.process_command(command)
+
+            if self._page.change:
+                break
 
 ##############################################################################
 
     def _process_command(self, command: str) -> None:
-        if command == "stop":
-            self._command_stop()
-        if command == "depth":
-            self._command_depth()
-        # if command == "profit":
-        # self._command_profit()
+        responses = {
+            "stop": self._command_stop,
+            "depth": self._command_depth,
+        }
+
+        response = responses.get(command, None)
+        if response:
+            response()
 
 ##############################################################################
 
@@ -35,75 +55,44 @@ class Calculator(Pages):
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What are the PRICE and OP ? ")
         except ValueError as e:
-            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(e))
             return
-
-        q = watchlist.clean_entity(q)
 
         if "price" not in q:
             helper.color_print(config.COLOR_WARNINGS, "No price value")
         if "op" not in q:
             helper.color_print(config.COLOR_WARNINGS, "No op value")
-        else:
-            value = q["price"]
-            op = q["op"]
-            if re.match(r"[0-9.]+", value):
-                price = float(value)
 
-                for i in range(-1, -11, -1):
-                    percent = float(i) / 100.0
+        query = WatchListItem(q, clean=True, check_values=True)
 
-                    color = config.COLOR_WHITE
+        price = float(query.entity.get("price", 0))
+        op = query.entity.get("op", "")
 
-                    if i <= -7:
-                        color = config.COLOR_WARNINGS
+        stops = self._process_stop(price, op)
 
-                    if op == "LONG":
-                        helper.color_print(
-                            color, "Stop {0: >2}%: {1: >4,.2f} $".format(
-                                i, price * (1.0 + percent)))
-                    elif op == "SHORT":
-                        helper.color_print(
-                            color, "Stop {0: >2}%: {1: >4,.2f} $".format(
-                                i, price * (1.0 - percent)))
-                    else:
-                        helper.color_print(config.COLOR_WARNINGS,
-                                           "Invalid OP Value")
-                        return
+        for i in stops:
+            color = config.COLOR_WHITE
+            if i <= -7:
+                color = config.COLOR_WARNINGS
 
-            else:
-                helper.color_print(config.COLOR_WARNINGS, "invalid price")
-                return
+            helper.color_print(
+                color, "Stop {0: >3}%: {1: >4,.2f} $".format(i, stops[i]))
 
 ##############################################################################
 
-    def _command_profit(self) -> None:
-        pass
-        try:
-            q = helper.key_value_input(config.COLOR_INFO,
-                                       "What is the price? ")
-        except ValueError as e:
-            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
-            return
+    def _process_stop(self, price: float, op: str) -> Dict[int, float]:
 
-        if "price" not in q:
-            helper.color_print(config.COLOR_WARNINGS, "No price value")
-        else:
-            value = q["price"]
-            if re.match(r"[0-9.]+", value):
-                price = float(value)
+        stops = {}
 
-                for i in range(1, 36):
-                    percent = float(i) / 100.0
+        for i in range(-1, -11, -1):
+            percent = float(i) / 100.0
 
-                    helper.color_print(
-                        config.COLOR_WHITE,
-                        "Profit {0: >3}%: {1: >4,.2f} $".format(
-                            i, price * (1.0 + percent)))
+            if op == "LONG":
+                stops[i] = price * (1.0 + percent)
+            elif op == "SHORT":
+                stops[i] = price * (1.0 - percent)
 
-            else:
-                helper.color_print(config.COLOR_WARNINGS, "invalid price")
-                return
+        return stops
 
 ##############################################################################
 
@@ -113,30 +102,33 @@ class Calculator(Pages):
                 config.COLOR_INFO,
                 "Please enter the start price and the end price...")
         except ValueError as e:
-            helper.color_print(config.COLOR_WARNINGS, "error: {}".format(e))
+            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(e))
             return
 
         if "start" not in q and "s" not in q:
             helper.color_print(config.COLOR_WARNINGS, "No start price")
         elif "end" not in q and "e" not in q:
             helper.color_print(config.COLOR_WARNINGS, "No end price")
-        else:
-            start = q.get("start", q.get("s", ""))
-            end = q.get("end", q.get("e", ""))
 
-            if re.match(r"[0-9.]+", start) and re.match(r"[0-9.]+", end):
-                start_price = float(start)
-                end_price = float(end)
+        start = q.get("start", q.get("s", ""))
+        end = q.get("end", q.get("e", ""))
 
-                depth = (end_price - start_price) / start_price
+        if not re.match(r"[0-9.]+", start) or not re.match(r"[0-9.]+", end):
+            helper.color_print(config.COLOR_WARNINGS, "invalid price")
+            return
 
-                helper.color_print(
-                    config.COLOR_WHITE,
-                    "Depth : {0: >3,.2f} %".format(depth * 100.0))
+        start_price = float(start)
+        end_price = float(end)
 
-            else:
-                helper.color_print(config.COLOR_WARNINGS, "invalid price")
-                return
+        depth = self._process_depth(start_price, end_price)
+
+        helper.color_print(config.COLOR_WHITE,
+                           "Depth : {0: >3,.2f} %".format(depth * 100.0))
+
+##############################################################################
+
+    def _process_depth(self, start: float, end: float) -> float:
+        return (end - start) / start
 
 
 ##############################################################################
