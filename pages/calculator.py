@@ -21,32 +21,22 @@ class Calculator():
 
         self._page = Pages(self._actions)
 
-##############################################################################
-
-    def main_loop(self) -> None:
-        while True:
-            try:
-                command = self._page.action_command()
-            except ValueError:
-                continue
-
-            self._process_command(command)
-            self._page.process_command(command)
-
-            if self._page.change:
-                break
-
-##############################################################################
-
-    def _process_command(self, command: str) -> None:
-        responses = {
+        self._handlers = {
             "stop": self._command_stop,
             "depth": self._command_depth,
         }
 
-        response = responses.get(command, None)
-        if response:
-            response()
+##############################################################################
+
+    def main_loop(self) -> None:
+        self._page.main_loop(self._process_command)
+
+##############################################################################
+
+    def _process_command(self, command: str) -> None:
+        handler = self._handlers.get(command, None)
+        if handler:
+            handler()
 
 ##############################################################################
 
@@ -58,12 +48,14 @@ class Calculator():
             helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(e))
             return
 
-        if "price" not in q:
-            helper.color_print(config.COLOR_WARNINGS, "No price value")
-        if "op" not in q:
-            helper.color_print(config.COLOR_WARNINGS, "No op value")
-
         query = WatchListItem(q, clean=True, check_values=True)
+
+        if "price" not in query.entity:
+            helper.color_print(config.COLOR_WARNINGS, "No price value")
+            return
+        if "op" not in query.entity:
+            helper.color_print(config.COLOR_WARNINGS, "No op value")
+            return
 
         price = float(query.entity.get("price", 0))
         op = query.entity.get("op", "")
@@ -82,6 +74,9 @@ class Calculator():
 
     def _process_stop(self, price: float, op: str) -> Dict[int, float]:
 
+        if price <= 0:
+            raise ValueError("Price should be greater than 0")
+
         stops = {}
 
         for i in range(-1, -11, -1):
@@ -91,6 +86,8 @@ class Calculator():
                 stops[i] = price * (1.0 + percent)
             elif op == "SHORT":
                 stops[i] = price * (1.0 - percent)
+            else:
+                raise ValueError("Invalid OP")
 
         return stops
 
@@ -128,6 +125,12 @@ class Calculator():
 ##############################################################################
 
     def _process_depth(self, start: float, end: float) -> float:
+        if start <= 0:
+            raise ValueError("Start Price should be greater than 0")
+
+        if end <= 0:
+            raise ValueError("End Price should be greater than 0")
+
         return (end - start) / start
 
 

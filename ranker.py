@@ -30,8 +30,8 @@ class MomentumRanker():
         points += self._sort_entity_int(entity, "rs",
                                         (self._base**3) * self._multiplier)
 
-        points += self._sort_entity_rank(entity, "acc",
-                                         (self._base**2) * self._multiplier)
+        # points += self._sort_entity_rank(entity, "acc",
+        # (self._base**2) * self._multiplier)
 
         return points
 

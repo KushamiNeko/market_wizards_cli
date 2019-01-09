@@ -26,7 +26,7 @@ class WatchListItem:
 
     _regex_ranks = r"^[A-Ea-e]$"
 
-    _regex_float_range = r"^[0-9.]+(?:~[0-9.]+)?$"
+    _regex_float_range = r"^[0-9.]+(?:[~-][0-9.]+)?$"
 
     _regex_date = r"^[Ee]?(\d{8})[OoCc]?$"
 
@@ -45,32 +45,33 @@ class WatchListItem:
         "eps": _regex_int,
         "smr": _regex_ranks,
         "flag": _regex_bool,
+        "action": _regex_bool,
     }
 
     _short_keys = {
-        # "symbol": "sy",
-        # "status": "st",
-        # "earnings": "e",
-        # "price": "p",
-        # "stop": "s",
-        # "note": "n",
-        # "flag": "f",
         "sy": "symbol",
         "st": "status",
+        "o": "op",
         "e": "earnings",
         "p": "price",
         "s": "stop",
         "n": "note",
         "f": "flag",
+        "a": "action",
     }
 
-    _color_label = config.COLOR_INFO
-    _color_sub_label = helper.hex_to_rgb(TerminalColors.paper_blue_300)
     _color_earnings = config.COLOR_WARNINGS
-    _color_portfolio = helper.hex_to_rgb(TerminalColors.paper_purple_200)
-    _color_portfolio_flag = helper.hex_to_rgb(TerminalColors.paper_purple_300)
-    _color_flag = helper.hex_to_rgb(TerminalColors.paper_light_green_200)
+
+    _color_flag = helper.hex_to_rgb(TerminalColors.paper_blue_200)
+    _color_action = helper.hex_to_rgb(TerminalColors.paper_green_300)
+
+    _color_portfolio_flag = helper.hex_to_rgb(
+        TerminalColors.paper_deep_purple_300)
+    _color_portfolio = helper.hex_to_rgb(TerminalColors.paper_purple_300)
+
     _color_general = helper.hex_to_rgb(TerminalColors.paper_grey_300)
+
+    _date_to_earnings_threshold = 14
 
     def __init__(self,
                  entity: Dict[str, str],
@@ -108,6 +109,9 @@ class WatchListItem:
 
         for key in self.entity:
             value = str(self.entity[key]).strip().lower()
+
+            if value == "":
+                continue
 
             regex = self._regex_book.get(key, None)
             if not regex:
@@ -157,10 +161,24 @@ class WatchListItem:
                 if value == "l":
                     value = "launched"
 
+            if key == "price":
+                if value == "0" or value == "0.0":
+                    value = ""
+
+            if key == "stop":
+                if value == "0" or value == "0.0":
+                    value = ""
+
             if key == "note":
                 value = value.replace("_", " ", -1)
 
             if key == "flag":
+                if value == "t":
+                    value = "true"
+                if value == "f":
+                    value = "false"
+
+            if key == "action":
                 if value == "t":
                     value = "true"
                 if value == "f":
@@ -181,6 +199,9 @@ class WatchListItem:
             else:
                 self.color = self._color_portfolio
 
+        if str(self.entity.get("action", "")).upper() == "TRUE":
+            self.color = self._color_action
+
         if str(self.entity.get("earnings", "")) != "":
             match = re.match(self._regex_date,
                              str(self.entity.get("earnings", "")))
@@ -188,7 +209,8 @@ class WatchListItem:
             if match:
                 date = int(match.group(1))
 
-                if helper.days_to_date(date) < 7:
+                if helper.days_to_date(
+                        date) < self._date_to_earnings_threshold:
                     self.color = self._color_earnings
 
 

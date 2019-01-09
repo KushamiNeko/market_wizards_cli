@@ -85,7 +85,7 @@ if __name__ == "__main__":
     ##########################################################################
 
     helper.color_print(config.COLOR_INFO,
-                       "Welcom to Market Wizards command line interface")
+                       "Welcom to Market Wizards Wealthy Interface")
 
     email = input("email: ")
     password = getpass.getpass("password: ").encode("utf-8")

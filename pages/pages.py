@@ -1,6 +1,6 @@
 from context import Context
 import helper
-from typing import List
+from typing import List, Callable
 import config
 
 ##############################################################################
@@ -18,32 +18,66 @@ class Pages():
 
         self.change = False
 
-##############################################################################
-
-    def action_command(self) -> str:
-        command = helper.color_input(
-            config.COLOR_COMMAND, "Command ({}): ".format(" ".join(
-                map(lambda x: "'{}'".format(x), self._actions))))
-
-        command = command.strip()
-
-        if command not in self._actions:
-            self.command_unknow()
-            raise ValueError("Unknow Command")
-
-        return command
-
-##############################################################################
-
-    def process_command(self, command: str) -> None:
-        responses = {
+        self._handlers = {
             "back": self.command_back,
             "exit": self.command_exit,
         }
 
-        response = responses.get(command, None)
-        if response:
-            response()
+##############################################################################
+
+    def main_loop(self, handler: Callable[[str], None]) -> None:
+        while True:
+            try:
+                command = self.get_command()
+            except ValueError as err:
+                helper.color_print(config.COLOR_WARNINGS, str(err))
+                continue
+
+            self.process_command(command)
+            handler(command)
+
+            if self.change:
+                break
+
+##############################################################################
+
+    def get_command(self) -> str:
+        command = helper.color_input(
+            config.COLOR_COMMAND, "Command ({}): ".format(" ".join(
+                map(lambda x: "'{}'".format(x), self._actions))))
+
+        try:
+            command = self._clean_command(command.strip())
+            return command
+
+        except ValueError as err:
+            raise err
+
+##############################################################################
+
+    def _clean_command(self, command: str) -> str:
+        clean = ""
+
+        for action in self._actions:
+            if action.startswith(command):
+                if clean == "":
+                    clean = action
+                else:
+                    raise ValueError(
+                        "Unclear Command with Multiple Actions: {}".format(
+                            [action, clean]))
+
+        if clean != "":
+            return clean
+
+        raise ValueError("Unknow Command")
+
+##############################################################################
+
+    def process_command(self, command: str) -> None:
+        handler = self._handlers.get(command, None)
+        if handler:
+            handler()
 
 ##############################################################################
 
@@ -54,14 +88,7 @@ class Pages():
 
 ##############################################################################
 
-    @staticmethod
-    def command_unknow() -> None:
-        helper.color_print(config.COLOR_WARNINGS, "Unknown Command")
-
-##############################################################################
-
-    @staticmethod
-    def command_exit() -> None:
+    def command_exit(self) -> None:
         helper.color_print(config.COLOR_INFO,
                            "Thank you for using Market Wizards!!!")
         exit(0)

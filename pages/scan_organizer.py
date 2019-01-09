@@ -7,6 +7,7 @@ import pandas as pd
 
 import config
 import helper
+from list_printer import ListPrinter
 from terminal import TerminalColors
 from pages.pages import Pages
 from context import Context
@@ -31,26 +32,7 @@ class ScanOrganizer():
 
         self._page = Pages(self._actions)
 
-##############################################################################
-
-    def main_loop(self) -> None:
-        while True:
-            try:
-                command = self._page.action_command()
-            except ValueError:
-                continue
-
-            self._process_command(command)
-            self._page.process_command(command)
-
-            if self._page.change:
-                break
-
-##############################################################################
-
-    def _process_command(self, command: str) -> None:
-
-        responses = {
+        self._handlers = {
             "ibd stock lists": self._command_ibd_stock_lists,
             "ibd data tables": self._command_ibd_data_tables,
             "stock charts scans": self._command_stock_charts_scans,
@@ -58,9 +40,17 @@ class ScanOrganizer():
             # "print list": self._command_print_list,
         }
 
-        response = responses.get(command, None)
-        if response:
-            response()
+##############################################################################
+
+    def main_loop(self) -> None:
+        self._page.main_loop(self._process_command)
+
+##############################################################################
+
+    def _process_command(self, command: str) -> None:
+        handler = self._handlers.get(command, None)
+        if handler:
+            handler()
 
 ##############################################################################
 
@@ -88,34 +78,15 @@ class ScanOrganizer():
 
 ##############################################################################
 
-    def _generate_list(self, separator: str) -> None:
-        stocks_list = list(self._stocks_list)
-
-        loop = (len(stocks_list) // 500) + 1
-
-        for i in range(loop):
-            s = i * 500
-            e = (i + 1) * 500
-            if i != (loop - 1):
-                symbols = stocks_list[s:e]
-            else:
-                symbols = stocks_list[s:]
-
-            helper.color_print(
-                helper.hex_to_rgb(TerminalColors.paper_amber_300),
-                "\n{} stocks\n".format(len(symbols)))
-
-            helper.color_print(config.COLOR_WHITE, separator.join(symbols))
-
-##############################################################################
-
     def _command_print_csv(self) -> None:
-        self._generate_list(",")
+        printer = ListPrinter()
+        printer.print_csv(list(self._stocks_list))
 
 ##############################################################################
 
     def _command_print_list(self) -> None:
-        self._generate_list("\n")
+        printer = ListPrinter()
+        printer.print_list(list(self._stocks_list))
 
 
 ##############################################################################

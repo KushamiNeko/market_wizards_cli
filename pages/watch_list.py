@@ -6,6 +6,7 @@ from ibd_parser import IBDResearchParser
 from ranker import MomentumRanker
 from terminal import TerminalColors
 from pages.pages import Pages
+from list_printer import ListPrinter
 from pages.calculator import Calculator
 from context import Context
 from typing import Dict, List, Set
@@ -41,7 +42,7 @@ class WatchList():
         "{earnings: >{width_l}}",
         "{price: >{width_l}}",
         "{stop: >{width_l}}",
-        "{loss: >{width_l}}",
+        # "{loss: >{width_l}}",
         "{note: >{width_xl}}",
         "{grs: >{width}}",
         "{rs: >{width}}",
@@ -59,7 +60,7 @@ class WatchList():
         "EARNINGS",
         "PRICE",
         "STOP",
-        "LOSS",
+        # "LOSS",
         "NOTE",
         "GRS",
         "RS",
@@ -78,25 +79,7 @@ class WatchList():
 
         self._page = Pages(self._actions)
 
-##############################################################################
-
-    def main_loop(self) -> None:
-        while True:
-            try:
-                command = self._page.action_command()
-            except ValueError:
-                continue
-
-            self._process_command(command)
-            self._page.process_command(command)
-
-            if self._page.change:
-                break
-
-##############################################################################
-
-    def _process_command(self, command: str) -> None:
-        responses = {
+        self._handlers = {
             "show": self._command_show,
             "find": self._command_find,
             "add": self._command_add,
@@ -108,9 +91,17 @@ class WatchList():
             # "print list": self._command_print_list,
         }
 
-        response = responses.get(command, None)
-        if response:
-            response()
+##############################################################################
+
+    def main_loop(self) -> None:
+        self._page.main_loop(self._process_command)
+
+##############################################################################
+
+    def _process_command(self, command: str) -> None:
+        handler = self._handlers.get(command, None)
+        if handler:
+            handler()
 
 ##############################################################################
 
@@ -128,7 +119,7 @@ class WatchList():
                 earnings="Earnings",
                 price="Price",
                 stop="Stop",
-                loss="Loss",
+                # loss="Loss",
                 note="Note",
                 grs="GRS",
                 rs="RS",
@@ -156,7 +147,7 @@ class WatchList():
                     earnings=entity.get("earnings", ""),
                     price=entity.get("price", ""),
                     stop=entity.get("stop", ""),
-                    loss=entity.get("loss", ""),
+                    # loss=entity.get("loss", ""),
                     note=entity.get("note", ""),
                     grs=entity.get("grs", ""),
                     rs=entity.get("rs", ""),
@@ -341,8 +332,7 @@ class WatchList():
                                                     self.context.uid, q)
 
             if not entity:
-                raise ValueError("symbol not in the watch list: {}".format(
-                    parser.symbol))
+                continue
 
             for k in parser.ibd_research:
                 entity[k] = parser.ibd_research[k]
@@ -357,55 +347,36 @@ class WatchList():
 
 ##############################################################################
 
-    def _generate_list(self, entities: List[Dict[str, str]],
-                       separator: str) -> None:
-        if len(entities) == 0:
-            raise ValueError("No Entities Match The Queries")
-
-        symbols_l: Set = set()
-        symbols_s: Set = set()
-
-        for entity in entities:
-            symbol = entity.get("symbol", "")
-            op = entity.get("op", "").lower()
-            if symbol and op:
-                if op == "long":
-                    symbols_l.add(symbol)
-                elif op == "short":
-                    symbols_s.add(symbol)
-
-        if (len(symbols_l) + len(symbols_s)) != len(entities):
-            raise ValueError(
-                "CSV list missing symbols due to empty symbol or op")
-
-        helper.color_print(
-            config.COLOR_INFO, "Watch List CSV LONG: {} stocks".format(
-                len(symbols_l)))
-
-        helper.color_print(config.COLOR_WHITE, separator.join(symbols_l))
-
-        helper.color_print(
-            config.COLOR_INFO, "Watch List CSV SHORT: {} stocks".format(
-                len(symbols_s)))
-
-        helper.color_print(config.COLOR_WHITE, separator.join(symbols_s))
-
-##############################################################################
-
     def _command_print_csv(self) -> None:
         try:
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What do you want to search? ")
 
             entities = self._process_find(q)
+            symbols = self._get_symbols(entities)
 
-            self._show_entities(entities)
-
-            self._generate_list(entities, ",")
+            printer = ListPrinter()
+            printer.print_csv(symbols)
 
         except ValueError as err:
             helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
             return
+
+##############################################################################
+
+    def _get_symbols(self, entities: List[Dict[str, str]]) -> List[str]:
+
+        if len(entities) == 0:
+            raise ValueError("No Entities Match The Queries")
+
+        symbols = []
+
+        for entity in entities:
+            symbol = entity.get("symbol", "")
+            if symbol != "":
+                symbols.append(symbol)
+
+        return symbols
 
 
 ##############################################################################

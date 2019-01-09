@@ -11,7 +11,10 @@ class IBDResearchParser():
 
     _regex_ratings = r"""\s*<ul\s*class=["']smartRating["']>\s*<li>\s*<a\s*class=["']glossDef["']\s*href=["'][^'"]+["']\s*rel=["'][^'"]+["']>\s*<span\s*class=["']typespan["']\s*style=["'][^'"]+["']>\s*([^<]+)\s*</span>\s*</a>\s*</li>\s*<li>\s*([A-Ea-e0-9+-]+)\s*</li>\s*<li>\s*<a\s*class=["']passDef["']\s*href=["'][^'"]+["']\s*rel=["'][^'"]+["']\s*>\s*<img\s*class=["']FSIcons["']\s*src=["'][^'"]+["']\s*width=["'][^'"]+["']\s*height=["'][^'"]+["']\s*alt=["'][^'"]+["']\s*[/]?>\s*</a>\s*</li>\s*</ul>\s*"""
 
-    _regex_eps_due_date = r"""\s*<ul>\s*<li>\s*(EPS Due Date)\s*<\/li>\s*<li>\s*([^<]+)\s*<\/li>\s*<\/ul>\s*"""
+    _regex_daily_price_range = r"""\s*<ul>\s*<li>\s*Today's Range\s*<\/li>\s*<li>\s*<span\s*class=["'][^"']+["']>\s*([0-9.]+)\s*<\/span>\s*[^<]+\s*<span\s*class=["'][^"']+["']>\s*([0-9.]+)\s*<\/span>\s*"""
+
+    # _regex_eps_due_date = r"""\s*<ul>\s*<li>\s*(EPS Due Date)\s*<\/li>\s*<li>\s*([^<]+)\s*<\/li>\s*<\/ul>\s*"""
+    _regex_data = r"""\s*<ul>\s*<li>\s*([^<]+)\s*<\/li>\s*<li>\s*([^<]+)\s*<\/li>\s*<\/ul>\s*"""
 
     _ratings_name = {
         "Composite Rating": "comp",
@@ -62,11 +65,29 @@ class IBDResearchParser():
                     value = match_rank.group(1).strip()
                     ratings[self._ratings_name[rating]] = value
 
-            match_eps = re.findall(self._regex_eps_due_date, content,
-                                   re.DOTALL)
-            if match_eps:
-                ratings[self._ratings_name[
-                    match_eps[0][0]]] = self._format_date(match_eps[0][1])
+            # match_eps = re.findall(self._regex_eps_due_date, content,
+            # re.DOTALL)
+            # if match_eps:
+            # try:
+            # date = self._format_date(match_eps[0][1])
+            # ratings[self._ratings_name[match_eps[0][0]]] = date
+            # except ValueError:
+            # pass
+
+            match_data = re.finditer(self._regex_data, content, re.DOTALL)
+
+            for match in match_data:
+                if not match:
+                    continue
+
+                label = match.group(1).strip()
+
+                if label == "EPS Due Date":
+                    try:
+                        date = self._format_date(match.group(2))
+                        ratings[self._ratings_name[label]] = date
+                    except ValueError:
+                        pass
 
         self.ibd_research = ratings
 
