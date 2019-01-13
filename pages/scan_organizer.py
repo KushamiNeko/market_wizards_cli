@@ -21,6 +21,7 @@ class ScanOrganizer():
         "ibd stock lists",
         "ibd data tables",
         "stock charts scans",
+        "csv string",
         "print csv",
         # "print list",
     ]
@@ -36,6 +37,7 @@ class ScanOrganizer():
             "ibd stock lists": self._command_ibd_stock_lists,
             "ibd data tables": self._command_ibd_data_tables,
             "stock charts scans": self._command_stock_charts_scans,
+            "csv string": self._command_csv,
             "print csv": self._command_print_csv,
             # "print list": self._command_print_list,
         }
@@ -75,6 +77,11 @@ class ScanOrganizer():
 
     def _command_stock_charts_scans(self) -> None:
         self._collect_symbols_from_parser(_ScanCSVsParser)
+
+##############################################################################
+
+    def _command_csv(self) -> None:
+        self._collect_symbols_from_parser(_CSVStringParser)
 
 ##############################################################################
 
@@ -318,6 +325,55 @@ class _ScanCSVsParser():
 
             helper.color_print(config.COLOR_INFO, "{} STOCKS in {}".format(
                 count, f))
+
+        return symbols
+
+
+##############################################################################
+
+
+class _CSVStringParser():
+    def __init__(self) -> None:
+        pass
+
+##############################################################################
+
+    def list_generator(self) -> Generator:
+        string = helper.color_input(
+            helper.hex_to_rgb(TerminalColors.paper_amber_300),
+            "Please enter the csv string containing the stocks: ")
+
+        string = string.replace("'", "").strip()
+
+        try:
+            symbols = self._parse_csv(string)
+
+            for symbol in symbols:
+                yield symbol
+
+        except ValueError as err:
+            helper.color_print(
+                helper.hex_to_rgb(TerminalColors.paper_red_500),
+                "ERROR: {}".format(str(err)))
+
+##############################################################################
+
+    def _parse_csv(self, string: str) -> Set[str]:
+        if string.find(",") == -1:
+            raise ValueError("Invalid csv string: {}".format(string))
+
+        symbols = set()
+        count = 0
+
+        for symbol in string.split(","):
+            symbol = symbol.strip()
+
+            if symbol != "":
+                symbols.add(symbol)
+                count += 1
+
+        helper.color_print(config.COLOR_INFO, "{} STOCKS in {}".format(
+            count, "CSV String"))
 
         return symbols
 

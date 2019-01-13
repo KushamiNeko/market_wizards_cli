@@ -37,7 +37,7 @@ class WatchListItem:
         "earnings": _regex_date,
         "price": _regex_float_range,
         "stop": _regex_float_range,
-        "note": r"\S+",
+        "note": r"^\S+$",
         "grs": _regex_ranks,
         "rs": _regex_int,
         "acc": _regex_ranks,
@@ -62,11 +62,13 @@ class WatchListItem:
 
     _color_earnings = config.COLOR_WARNINGS
 
-    _color_flag = helper.hex_to_rgb(TerminalColors.paper_blue_200)
-    _color_action = helper.hex_to_rgb(TerminalColors.paper_green_300)
+    _color_action = helper.hex_to_rgb(TerminalColors.paper_blue_300)
 
-    _color_portfolio_flag = helper.hex_to_rgb(
-        TerminalColors.paper_deep_purple_300)
+    # _color_action = helper.hex_to_rgb(TerminalColors.paper_green_300)
+
+    # _color_portfolio_flag = helper.hex_to_rgb(
+    # TerminalColors.paper_deep_purple_300)
+
     _color_portfolio = helper.hex_to_rgb(TerminalColors.paper_purple_300)
 
     _color_general = helper.hex_to_rgb(TerminalColors.paper_grey_300)
@@ -111,7 +113,11 @@ class WatchListItem:
             value = str(self.entity[key]).strip().lower()
 
             if value == "":
-                continue
+                if key in self._necessary_keys:
+                    raise ValueError(
+                        "necessary key cannot be empty: {}".format(key))
+                else:
+                    continue
 
             regex = self._regex_book.get(key, None)
             if not regex:
@@ -143,7 +149,7 @@ class WatchListItem:
     def _clean_values(self) -> None:
 
         for key in self.entity:
-            value = str(self.entity[key]).strip()
+            value = str(self.entity[key]).strip().lower()
 
             if key == "op":
                 if value == "l":
@@ -162,11 +168,13 @@ class WatchListItem:
                     value = "launched"
 
             if key == "price":
-                if value == "0" or value == "0.0":
+                if re.match(self._regex_float, value,
+                            re.DOTALL) and float(value) == 0:
                     value = ""
 
             if key == "stop":
-                if value == "0" or value == "0.0":
+                if re.match(self._regex_float, value,
+                            re.DOTALL) and float(value) == 0:
                     value = ""
 
             if key == "note":
@@ -190,14 +198,17 @@ class WatchListItem:
 
     def _colorize(self) -> None:
 
-        if str(self.entity.get("flag", "")).upper() == "TRUE":
-            self.color = self._color_flag
+        # if str(self.entity.get("flag", "")).upper() == "TRUE":
+        # self.color = self._color_flag
+
+        # if self.entity.get("status", "") == "PORTFOLIO":
+        # if str(self.entity.get("flag", "")).upper() == "TRUE":
+        # self.color = self._color_portfolio_flag
+        # else:
+        # self.color = self._color_portfolio
 
         if self.entity.get("status", "") == "PORTFOLIO":
-            if str(self.entity.get("flag", "")).upper() == "TRUE":
-                self.color = self._color_portfolio_flag
-            else:
-                self.color = self._color_portfolio
+            self.color = self._color_portfolio
 
         if str(self.entity.get("action", "")).upper() == "TRUE":
             self.color = self._color_action

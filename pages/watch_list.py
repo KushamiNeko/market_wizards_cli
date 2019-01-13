@@ -43,7 +43,6 @@ class WatchList():
         "{price: >{width_l}}",
         "{stop: >{width_l}}",
         # "{loss: >{width_l}}",
-        "{note: >{width_xl}}",
         "{grs: >{width}}",
         "{rs: >{width}}",
         "{acc: >{width}}",
@@ -51,6 +50,7 @@ class WatchList():
         "{eps: >{width}}",
         "{smr: >{width}}",
         "{comp: >{width}}",
+        "{note: >{width_xl}}",
     ])
 
     _data_lables = [
@@ -61,7 +61,6 @@ class WatchList():
         "PRICE",
         "STOP",
         # "LOSS",
-        "NOTE",
         "GRS",
         "RS",
         "ACC",
@@ -70,6 +69,7 @@ class WatchList():
         "SMR",
         "COMP",
         "FLAG",
+        "NOTE",
     ]
 
     _database = "--watch-list--"
@@ -108,7 +108,7 @@ class WatchList():
     def _show_entities(self, entities: List) -> None:
 
         if len(entities) == 0:
-            raise ValueError("No Entities Match THe Queries")
+            raise ValueError("No Entities Match The Queries")
 
         helper.color_print(
             config.COLOR_INFO,
@@ -120,7 +120,6 @@ class WatchList():
                 price="Price",
                 stop="Stop",
                 # loss="Loss",
-                note="Note",
                 grs="GRS",
                 rs="RS",
                 acc="ACC",
@@ -128,6 +127,7 @@ class WatchList():
                 eps="EPS",
                 smr="SMR",
                 comp="COMP",
+                note="Note",
                 width=self._width,
                 width_l=self._width_l,
                 width_xl=self._width_xl))
@@ -148,7 +148,6 @@ class WatchList():
                     price=entity.get("price", ""),
                     stop=entity.get("stop", ""),
                     # loss=entity.get("loss", ""),
-                    note=entity.get("note", ""),
                     grs=entity.get("grs", ""),
                     rs=entity.get("rs", ""),
                     acc=entity.get("acc", ""),
@@ -156,6 +155,7 @@ class WatchList():
                     eps=entity.get("eps", ""),
                     smr=entity.get("smr", ""),
                     comp=entity.get("comp", ""),
+                    note=entity.get("note", ""),
                     width=self._width,
                     width_l=self._width_l,
                     width_xl=self._width_xl))
@@ -303,7 +303,7 @@ class WatchList():
     def _command_ibd_research(self) -> None:
         path = helper.color_input(
             helper.hex_to_rgb(TerminalColors.paper_amber_300),
-            "Please enter the folder containing ibd stocks xls files: ")
+            "Please enter the folder containing ibd research html files: ")
 
         path = path.replace("'", "").strip()
 

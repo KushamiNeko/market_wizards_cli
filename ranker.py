@@ -21,8 +21,11 @@ class MomentumRanker():
         points += self._sort_entity_status(entity,
                                            (self._base**6) * self._multiplier)
 
-        points += self._sort_entity_flag(entity,
-                                         (self._base**5) * self._multiplier)
+        points += self._sort_entity_action(entity,
+                                           (self._base**5) * self._multiplier)
+
+        # points += self._sort_entity_flag(entity,
+        # (self._base**5) * self._multiplier)
 
         points += self._sort_entity_rank(entity, "grs",
                                          (self._base**4) * self._multiplier)
@@ -81,6 +84,14 @@ class MomentumRanker():
 
     def _sort_entity_flag(self, entity: Dict, multiplier: int) -> int:
         if entity.get("flag", False):
+            return 1 * multiplier
+        else:
+            return 2 * multiplier
+
+##############################################################################
+
+    def _sort_entity_action(self, entity: Dict, multiplier: int) -> int:
+        if entity.get("action", False):
             return 1 * multiplier
         else:
             return 2 * multiplier
