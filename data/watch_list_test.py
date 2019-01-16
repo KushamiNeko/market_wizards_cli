@@ -1868,6 +1868,7 @@ class TestWatchListItem(unittest.TestCase):
             "price": "0",
             "stop": "0",
             "note": "HELLO",
+            "flag": " FALSE",
             "action": " FALSE",
         }
 
@@ -1883,6 +1884,7 @@ class TestWatchListItem(unittest.TestCase):
             "price": "0",
             "stop": "0",
             "note": "HELLO",
+            "flag": " FALSE",
             "action": " FALSE",
         }
 
@@ -1898,6 +1900,7 @@ class TestWatchListItem(unittest.TestCase):
             "price": "0",
             "stop": "0",
             "note": "HELLO",
+            "flag": " FALSE",
             "action": " FALSE",
         }
 
@@ -1913,6 +1916,7 @@ class TestWatchListItem(unittest.TestCase):
             "price": "0",
             "stop": "0",
             "note": "HELLO",
+            "flag": " FALSE",
             "action": " FALSE",
         }
 
@@ -1928,6 +1932,23 @@ class TestWatchListItem(unittest.TestCase):
             "price": "0",
             "stop": "0",
             "note": "HELLO",
+            "flag": " TRUE",
+            "action": " FALSE",
+        }
+
+        item = WatchListItem(entity, clean=True, colorize=True)
+
+        self.assertTupleEqual(item.color, item._color_flag)
+
+        entity = {
+            "symbol": "A",
+            "op": "LONG ",
+            "status": "REPAIRING",
+            "earnings": "21190110",
+            "price": "0",
+            "stop": "0",
+            "note": "HELLO",
+            "flag": " FALSE",
             "action": " TRUE",
         }
 
@@ -1938,26 +1959,12 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "CHARGING",
+            "status": "REPAIRING",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
             "note": "HELLO",
-            "action": " TRUE",
-        }
-
-        item = WatchListItem(entity, clean=True, colorize=True)
-
-        self.assertTupleEqual(item.color, item._color_action)
-
-        entity = {
-            "symbol": "A",
-            "op": "LONG ",
-            "status": "LAUNCHED",
-            "earnings": "21190110",
-            "price": "0",
-            "stop": "0",
-            "note": "HELLO",
+            "flag": " TRUE",
             "action": " TRUE",
         }
 
@@ -1973,6 +1980,39 @@ class TestWatchListItem(unittest.TestCase):
             "price": "0",
             "stop": "0",
             "note": "HELLO",
+            "flag": "TRUE",
+            "action": " FLASE",
+        }
+
+        item = WatchListItem(entity, clean=True, colorize=True)
+
+        self.assertTupleEqual(item.color, item._color_flag)
+
+        entity = {
+            "symbol": "A",
+            "op": "LONG ",
+            "status": "PORTFOLIO",
+            "earnings": "21190110",
+            "price": "0",
+            "stop": "0",
+            "note": "HELLO",
+            "flag": "FALSE",
+            "action": " TRUE",
+        }
+
+        item = WatchListItem(entity, clean=True, colorize=True)
+
+        self.assertTupleEqual(item.color, item._color_action)
+
+        entity = {
+            "symbol": "A",
+            "op": "LONG ",
+            "status": "PORTFOLIO",
+            "earnings": "21190110",
+            "price": "0",
+            "stop": "0",
+            "note": "HELLO",
+            "flag": "TRUE",
             "action": " TRUE",
         }
 
@@ -1997,6 +2037,8 @@ class TestWatchListItem(unittest.TestCase):
             "0",
             "note":
             "HELLO",
+            "flag":
+            "FALSE",
             "action":
             "FALSE",
         }
@@ -2022,6 +2064,8 @@ class TestWatchListItem(unittest.TestCase):
             "0",
             "note":
             "HELLO",
+            "flag":
+            "FALSE",
             "action":
             "FALSE",
         }
@@ -2047,6 +2091,8 @@ class TestWatchListItem(unittest.TestCase):
             "0",
             "note":
             "HELLO",
+            "flag":
+            "FALSE",
             "action":
             "FALSE",
         }
@@ -2072,6 +2118,8 @@ class TestWatchListItem(unittest.TestCase):
             "0",
             "note":
             "HELLO",
+            "flag":
+            "FALSE",
             "action":
             "FALSE",
         }
@@ -2097,6 +2145,62 @@ class TestWatchListItem(unittest.TestCase):
             "0",
             "note":
             "HELLO",
+            "flag":
+            "TRUE",
+            "action":
+            "FALSE",
+        }
+
+        item = WatchListItem(entity, clean=True, colorize=True)
+
+        self.assertTupleEqual(item.color, item._color_earnings)
+
+        entity = {
+            "symbol":
+            "A",
+            "op":
+            "LONG ",
+            "status":
+            "PORTFOLIO",
+            "earnings":
+            "{}".format(
+                int(datetime.datetime.now().strftime("%Y%m%d")) +
+                earnings_date_threshold),
+            "price":
+            "0",
+            "stop":
+            "0",
+            "note":
+            "HELLO",
+            "flag":
+            "FLASE",
+            "action":
+            "TRUE",
+        }
+
+        item = WatchListItem(entity, clean=True, colorize=True)
+
+        self.assertTupleEqual(item.color, item._color_earnings)
+
+        entity = {
+            "symbol":
+            "A",
+            "op":
+            "LONG ",
+            "status":
+            "PORTFOLIO",
+            "earnings":
+            "{}".format(
+                int(datetime.datetime.now().strftime("%Y%m%d")) +
+                earnings_date_threshold),
+            "price":
+            "0",
+            "stop":
+            "0",
+            "note":
+            "HELLO",
+            "flag":
+            "TRUE",
             "action":
             "TRUE",
         }

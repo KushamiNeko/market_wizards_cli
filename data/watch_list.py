@@ -62,12 +62,9 @@ class WatchListItem:
 
     _color_earnings = config.COLOR_WARNINGS
 
-    _color_action = helper.hex_to_rgb(TerminalColors.paper_blue_300)
+    _color_flag = helper.hex_to_rgb(TerminalColors.paper_blue_300)
 
-    # _color_action = helper.hex_to_rgb(TerminalColors.paper_green_300)
-
-    # _color_portfolio_flag = helper.hex_to_rgb(
-    # TerminalColors.paper_deep_purple_300)
+    _color_action = helper.hex_to_rgb(TerminalColors.paper_green_300)
 
     _color_portfolio = helper.hex_to_rgb(TerminalColors.paper_purple_300)
 
@@ -198,17 +195,11 @@ class WatchListItem:
 
     def _colorize(self) -> None:
 
-        # if str(self.entity.get("flag", "")).upper() == "TRUE":
-        # self.color = self._color_flag
-
-        # if self.entity.get("status", "") == "PORTFOLIO":
-        # if str(self.entity.get("flag", "")).upper() == "TRUE":
-        # self.color = self._color_portfolio_flag
-        # else:
-        # self.color = self._color_portfolio
-
         if self.entity.get("status", "") == "PORTFOLIO":
             self.color = self._color_portfolio
+
+        if str(self.entity.get("flag", "")).upper() == "TRUE":
+            self.color = self._color_flag
 
         if str(self.entity.get("action", "")).upper() == "TRUE":
             self.color = self._color_action
