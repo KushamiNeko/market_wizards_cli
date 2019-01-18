@@ -335,6 +335,10 @@ class WatchList():
                 continue
 
             for k in parser.ibd_research:
+                if k == "earnings":
+                    if re.match(r"[CcOo]", entity.get("earnings", "")):
+                        continue
+
                 entity[k] = parser.ibd_research[k]
 
             self.context.database.replace_one(self._database, self.context.uid,

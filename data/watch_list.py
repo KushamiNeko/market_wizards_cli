@@ -28,7 +28,8 @@ class WatchListItem:
 
     _regex_float_range = r"^[0-9.]+(?:[~-][0-9.]+)?$"
 
-    _regex_date = r"^[Ee]?(\d{8})[OoCc]?$"
+    # _regex_date = r"^[Ee]?(\d{8})[OoCc]?$"
+    _regex_date = r"^[EeOoCc]?(\d{8})$"
 
     _regex_book = {
         "symbol": _regex_symbol,

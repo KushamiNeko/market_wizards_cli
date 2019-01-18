@@ -474,7 +474,7 @@ class TestWatchListItem(unittest.TestCase):
             entity.get("earnings", ""), item.entity.get("earnings", ""))
 
         entity = {
-            "earnings": "20190110O",
+            "earnings": "O20190110",
         }
 
         item = WatchListItem(entity, check_values=True)
@@ -483,7 +483,7 @@ class TestWatchListItem(unittest.TestCase):
             entity.get("earnings", ""), item.entity.get("earnings", ""))
 
         entity = {
-            "earnings": "20190110C",
+            "earnings": "C20190110",
         }
 
         item = WatchListItem(entity, check_values=True)
@@ -501,7 +501,7 @@ class TestWatchListItem(unittest.TestCase):
             entity.get("earnings", ""), item.entity.get("earnings", ""))
 
         entity = {
-            "earnings": "20190110o",
+            "earnings": "o20190110",
         }
 
         item = WatchListItem(entity, check_values=True)
@@ -510,7 +510,7 @@ class TestWatchListItem(unittest.TestCase):
             entity.get("earnings", ""), item.entity.get("earnings", ""))
 
         entity = {
-            "earnings": "20190110c",
+            "earnings": "c20190110",
         }
 
         item = WatchListItem(entity, check_values=True)
@@ -543,7 +543,28 @@ class TestWatchListItem(unittest.TestCase):
             WatchListItem(entity, check_values=True)
 
         entity = {
+            "earnings": "20190110O",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
             "earnings": "20190110 O",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
+            "earnings": "20190110C",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
+            "earnings": "20190110 C",
         }
 
         with self.assertRaises(ValueError):
@@ -1090,7 +1111,7 @@ class TestWatchListItem(unittest.TestCase):
             "symbol": "A",
             "op": " LONG",
             "status": "LAUNCHED",
-            "earnings": "20190110C",
+            "earnings": "C20190110",
             "price": "100~105",
             "stop": "95~97",
             "note": "HELLO ",
@@ -1121,7 +1142,7 @@ class TestWatchListItem(unittest.TestCase):
             "symbol": "A",
             "op": "SHORT ",
             "status": "REPAIRING",
-            "earnings": "20190110O",
+            "earnings": "O20190110",
             "price": "0",
             "stop": "0",
             "note": " HELLO  ",

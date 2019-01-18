@@ -44,8 +44,8 @@ class Calculator():
         try:
             q = helper.key_value_input(config.COLOR_INFO,
                                        "What are the PRICE and OP ? ")
-        except ValueError as e:
-            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(e))
+        except ValueError as err:
+            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
             return
 
         query = WatchListItem(q, clean=True, check_values=True)
@@ -60,15 +60,21 @@ class Calculator():
         price = float(query.entity.get("price", 0))
         op = query.entity.get("op", "")
 
-        stops = self._process_stop(price, op)
+        try:
 
-        for i in stops:
-            color = config.COLOR_WHITE
-            if i <= -7:
-                color = config.COLOR_WARNINGS
+            stops = self._process_stop(price, op)
 
-            helper.color_print(
-                color, "Stop {0: >3}%: {1: >4,.2f} $".format(i, stops[i]))
+            for i in stops:
+                color = config.COLOR_WHITE
+                if i <= -7:
+                    color = config.COLOR_WARNINGS
+
+                helper.color_print(
+                    color, "Stop {0: >3}%: {1: >4,.2f} $".format(i, stops[i]))
+
+        except ValueError as err:
+            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
+            return
 
 ##############################################################################
 
@@ -98,8 +104,8 @@ class Calculator():
             q = helper.key_value_input(
                 config.COLOR_INFO,
                 "Please enter the start price and the end price...")
-        except ValueError as e:
-            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(e))
+        except ValueError as err:
+            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
             return
 
         if "start" not in q and "s" not in q:
@@ -117,10 +123,14 @@ class Calculator():
         start_price = float(start)
         end_price = float(end)
 
-        depth = self._process_depth(start_price, end_price)
+        try:
+            depth = self._process_depth(start_price, end_price)
 
-        helper.color_print(config.COLOR_WHITE,
-                           "Depth : {0: >3,.2f} %".format(depth * 100.0))
+            helper.color_print(config.COLOR_WHITE,
+                               "Depth : {0: >3,.2f} %".format(depth * 100.0))
+        except ValueError as err:
+            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
+            return
 
 ##############################################################################
 

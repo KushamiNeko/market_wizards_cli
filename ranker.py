@@ -21,11 +21,11 @@ class MomentumRanker():
         points += self._sort_entity_status(entity,
                                            (self._base**6) * self._multiplier)
 
-        points += self._sort_entity_action(entity,
-                                           (self._base**5) * self._multiplier)
-
-        # points += self._sort_entity_flag(entity,
+        # points += self._sort_entity_action(entity,
         # (self._base**5) * self._multiplier)
+
+        points += self._sort_entity_flag(entity,
+                                         (self._base**5) * self._multiplier)
 
         points += self._sort_entity_rank(entity, "grs",
                                          (self._base**4) * self._multiplier)
