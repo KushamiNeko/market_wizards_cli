@@ -38,7 +38,7 @@ class WatchList():
         "  ",
         "{symbol: <6}",
         "{op: >{width}}",
-        "{status: >{width_l}}",
+        # "{status: >{width_l}}",
         "{earnings: >{width_l}}",
         "{price: >{width_l}}",
         "{stop: >{width_l}}",
@@ -56,7 +56,7 @@ class WatchList():
     _data_lables = [
         "SYMBOL",
         "OP",
-        "STATUS",
+        # "STATUS",
         "EARNINGS",
         "PRICE",
         "STOP",
@@ -115,7 +115,7 @@ class WatchList():
             self._print_format.format(
                 symbol="Symbol",
                 op="Op",
-                status="Status",
+                # status="Status",
                 earnings="Earnings",
                 price="Price",
                 stop="Stop",
@@ -143,7 +143,7 @@ class WatchList():
                 self._print_format.format(
                     symbol=entity.get("symbol", ""),
                     op=entity.get("op", ""),
-                    status=entity.get("status", ""),
+                    # status=entity.get("status", ""),
                     earnings=entity.get("earnings", ""),
                     price=entity.get("price", ""),
                     stop=entity.get("stop", ""),

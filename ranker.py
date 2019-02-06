@@ -18,8 +18,11 @@ class MomentumRanker():
         points += self._sort_entity_op(entity,
                                        (self._base**7) * self._multiplier)
 
-        points += self._sort_entity_status(entity,
-                                           (self._base**6) * self._multiplier)
+        # points += self._sort_entity_status(entity,
+        # (self._base**6) * self._multiplier)
+
+        points += self._sort_entity_portfolio(
+            entity, (self._base**6) * self._multiplier)
 
         # points += self._sort_entity_action(entity,
         # (self._base**5) * self._multiplier)
@@ -59,6 +62,26 @@ class MomentumRanker():
 
         else:
             points = 5 * multiplier
+
+        return points
+
+##############################################################################
+
+    def _sort_entity_portfolio(self, entity: Dict, multiplier: int) -> int:
+
+        points = 0
+        value = entity.get("portfolio", None)
+
+        if value:
+            value = value.lower()
+
+            if value == "true":
+                points = 1 * multiplier
+            else:
+                points = 2 * multiplier
+
+        else:
+            points = 3 * multiplier
 
         return points
 

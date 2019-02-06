@@ -17,7 +17,7 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG",
-            "status": "CHARGING",
+            # "status": "CHARGING",
         }
 
         item = WatchListItem(entity, check_necessary=True)
@@ -25,15 +25,15 @@ class TestWatchListItem(unittest.TestCase):
         self.assertEqual(
             entity.get("symbol", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("op", ""), item.entity.get("op", ""))
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+        # self.assertEqual(
+        # entity.get("status", ""), item.entity.get("status", ""))
 
 ##############################################################################
 
     def test_check_necessary_keys_miss(self):
         entity = {
             "op": "LONG",
-            "status": "CHARGING",
+            # "status": "CHARGING",
         }
 
         with self.assertRaises(ValueError):
@@ -41,19 +41,19 @@ class TestWatchListItem(unittest.TestCase):
 
         entity = {
             "symbol": "A",
-            "status": "CHARGING",
+            # "status": "CHARGING",
         }
 
         with self.assertRaises(ValueError):
             WatchListItem(entity, check_necessary=True)
 
-        entity = {
-            "symbol": "A",
-            "op": "LONG",
-        }
+        # entity = {
+        # "symbol": "A",
+        # "op": "LONG",
+        # }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_necessary=True)
+        # with self.assertRaises(ValueError):
+        # WatchListItem(entity, check_necessary=True)
 
 ##############################################################################
 
@@ -238,204 +238,204 @@ class TestWatchListItem(unittest.TestCase):
 
 ##############################################################################
 
-    def test_check_values_succeed_status(self):
-        entity = {
-            "status": "CHARGING",
-        }
+# def test_check_values_succeed_status(self):
+# entity = {
+# "status": "CHARGING",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": " CHARGING ",
-        }
+# entity = {
+# "status": " CHARGING ",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "REPAIRING",
-        }
+# entity = {
+# "status": "REPAIRING",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "LAUNCHED",
-        }
+# entity = {
+# "status": "LAUNCHED",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "PORTFOLIO",
-        }
+# entity = {
+# "status": "PORTFOLIO",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "charging",
-        }
+# entity = {
+# "status": "charging",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "repairing",
-        }
+# entity = {
+# "status": "repairing",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "launched",
-        }
+# entity = {
+# "status": "launched",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "portfolio",
-        }
+# entity = {
+# "status": "portfolio",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "C",
-        }
+# entity = {
+# "status": "C",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "R",
-        }
+# entity = {
+# "status": "R",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "L",
-        }
+# entity = {
+# "status": "L",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "P",
-        }
+# entity = {
+# "status": "P",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "c",
-        }
+# entity = {
+# "status": "c",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "r",
-        }
+# entity = {
+# "status": "r",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "l",
-        }
+# entity = {
+# "status": "l",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
-        entity = {
-            "status": "p",
-        }
+# entity = {
+# "status": "p",
+# }
 
-        item = WatchListItem(entity, check_values=True)
+# item = WatchListItem(entity, check_values=True)
 
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+# self.assertEqual(
+# entity.get("status", ""), item.entity.get("status", ""))
 
 ##############################################################################
 
-    def test_check_values_invalid_status(self):
-        entity = {
-            "status": "",
-        }
+# def test_check_values_invalid_status(self):
+# entity = {
+# "status": "",
+# }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_values=True)
+# with self.assertRaises(ValueError):
+# WatchListItem(entity, check_values=True)
 
-        entity = {
-            "status": "ABC",
-        }
+# entity = {
+# "status": "ABC",
+# }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_values=True)
+# with self.assertRaises(ValueError):
+# WatchListItem(entity, check_values=True)
 
-        entity = {
-            "status": "abc",
-        }
+# entity = {
+# "status": "abc",
+# }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_values=True)
+# with self.assertRaises(ValueError):
+# WatchListItem(entity, check_values=True)
 
-        entity = {
-            "status": "123",
-        }
+# entity = {
+# "status": "123",
+# }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_values=True)
+# with self.assertRaises(ValueError):
+# WatchListItem(entity, check_values=True)
 
-        entity = {
-            "status": "[]",
-        }
+# entity = {
+# "status": "[]",
+# }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_values=True)
+# with self.assertRaises(ValueError):
+# WatchListItem(entity, check_values=True)
 
-        entity = {
-            "status": "123Abc[]",
-        }
+# entity = {
+# "status": "123Abc[]",
+# }
 
-        with self.assertRaises(ValueError):
-            WatchListItem(entity, check_values=True)
+# with self.assertRaises(ValueError):
+# WatchListItem(entity, check_values=True)
 
 ##############################################################################
 
@@ -1044,11 +1044,124 @@ class TestWatchListItem(unittest.TestCase):
 
 ##############################################################################
 
+    def test_check_values_succeed_portfolio(self):
+        entity = {
+            "portfolio": " TRUE ",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "TRUE",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "true",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        self.assertEqual(
+            entity.get("portfolio", ""), item.entity.get("portfolio", ""))
+
+        entity = {
+            "portfolio": "T",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        self.assertEqual(
+            entity.get("portfolio", ""), item.entity.get("portfolio", ""))
+
+        entity = {
+            "portfolio": "t",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        self.assertEqual(
+            entity.get("portfolio", ""), item.entity.get("portfolio", ""))
+
+        entity = {
+            "portfolio": "FALSE",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "false",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        self.assertEqual(
+            entity.get("portfolio", ""), item.entity.get("portfolio", ""))
+
+        entity = {
+            "portfolio": "F",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        self.assertEqual(
+            entity.get("portfolio", ""), item.entity.get("portfolio", ""))
+
+        entity = {
+            "portfolio": "f",
+        }
+
+        item = WatchListItem(entity, check_values=True)
+
+        self.assertEqual(
+            entity.get("portfolio", ""), item.entity.get("portfolio", ""))
+
+##############################################################################
+
+    def test_check_values_invalid_portfolio(self):
+        entity = {
+            "portfolio": "ABC",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "abc",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "123",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "[],",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+        entity = {
+            "portfolio": "123[],Abc",
+        }
+
+        with self.assertRaises(ValueError):
+            WatchListItem(entity, check_values=True)
+
+##############################################################################
+
     def test_check_values_succeed_01(self):
         entity = {
             "symbol": "A",
             "op": "LONG",
-            "status": "CHARGING",
+            # "status": "CHARGING",
             "earnings": "20190110",
             "price": "100",
             "stop": "100",
@@ -1062,8 +1175,8 @@ class TestWatchListItem(unittest.TestCase):
         self.assertEqual(
             entity.get("symbol", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("op", ""), item.entity.get("op", ""))
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+        # self.assertEqual(
+        # entity.get("status", ""), item.entity.get("status", ""))
         self.assertEqual(
             entity.get("earnings", ""), item.entity.get("earnings", ""))
         self.assertEqual(entity.get("price", ""), item.entity.get("price", ""))
@@ -1079,7 +1192,7 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "SHORT",
-            "status": "PORTFOLIO",
+            # "status": "PORTFOLIO",
             "earnings": "E20190110",
             "price": "100-105",
             "stop": "95-97",
@@ -1093,8 +1206,8 @@ class TestWatchListItem(unittest.TestCase):
         self.assertEqual(
             entity.get("symbol", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("op", ""), item.entity.get("op", ""))
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+        # self.assertEqual(
+        # entity.get("status", ""), item.entity.get("status", ""))
         self.assertEqual(
             entity.get("earnings", ""), item.entity.get("earnings", ""))
         self.assertEqual(entity.get("price", ""), item.entity.get("price", ""))
@@ -1110,7 +1223,7 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": " LONG",
-            "status": "LAUNCHED",
+            # "status": "LAUNCHED",
             "earnings": "C20190110",
             "price": "100~105",
             "stop": "95~97",
@@ -1124,8 +1237,8 @@ class TestWatchListItem(unittest.TestCase):
         self.assertEqual(
             entity.get("symbol", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("op", ""), item.entity.get("op", ""))
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+        # self.assertEqual(
+        # entity.get("status", ""), item.entity.get("status", ""))
         self.assertEqual(
             entity.get("earnings", ""), item.entity.get("earnings", ""))
         self.assertEqual(entity.get("price", ""), item.entity.get("price", ""))
@@ -1141,7 +1254,7 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "SHORT ",
-            "status": "REPAIRING",
+            # "status": "REPAIRING",
             "earnings": "O20190110",
             "price": "0",
             "stop": "0",
@@ -1155,8 +1268,8 @@ class TestWatchListItem(unittest.TestCase):
         self.assertEqual(
             entity.get("symbol", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("op", ""), item.entity.get("op", ""))
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+        # self.assertEqual(
+        # entity.get("status", ""), item.entity.get("status", ""))
         self.assertEqual(
             entity.get("earnings", ""), item.entity.get("earnings", ""))
         self.assertEqual(entity.get("price", ""), item.entity.get("price", ""))
@@ -1172,7 +1285,7 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG",
-            "status": "CHARGING",
+            # "status": "CHARGING",
             "earnings": "20190110",
             "price": "100",
             "stop": "100",
@@ -1186,8 +1299,8 @@ class TestWatchListItem(unittest.TestCase):
         self.assertEqual(
             entity.get("symbol", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("op", ""), item.entity.get("op", ""))
-        self.assertEqual(
-            entity.get("status", ""), item.entity.get("status", ""))
+        # self.assertEqual(
+        # entity.get("status", ""), item.entity.get("status", ""))
         self.assertEqual(
             entity.get("earnings", ""), item.entity.get("earnings", ""))
         self.assertEqual(entity.get("price", ""), item.entity.get("price", ""))
@@ -1203,7 +1316,7 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "sy": "A",
             "o": "LONG",
-            "st": "CHARGING",
+            # "st": "CHARGING",
             "e": "20190110",
             "p": "100",
             "s": "100",
@@ -1216,7 +1329,7 @@ class TestWatchListItem(unittest.TestCase):
 
         self.assertEqual(entity.get("sy", ""), item.entity.get("symbol", ""))
         self.assertEqual(entity.get("o", ""), item.entity.get("op", ""))
-        self.assertEqual(entity.get("st", ""), item.entity.get("status", ""))
+        # self.assertEqual(entity.get("st", ""), item.entity.get("status", ""))
         self.assertEqual(entity.get("e", ""), item.entity.get("earnings", ""))
         self.assertEqual(entity.get("p", ""), item.entity.get("price", ""))
         self.assertEqual(entity.get("s", ""), item.entity.get("stop", ""))
@@ -1328,142 +1441,142 @@ class TestWatchListItem(unittest.TestCase):
 
 ##############################################################################
 
-    def test_clean_values_succeed_status(self):
-        entity = {
-            "status": "CHARGING",
-        }
+# def test_clean_values_succeed_status(self):
+# entity = {
+# "status": "CHARGING",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "CHARGING")
+# self.assertEqual(item.entity.get("status", ""), "CHARGING")
 
-        entity = {
-            "status": "charging",
-        }
+# entity = {
+# "status": "charging",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "CHARGING")
+# self.assertEqual(item.entity.get("status", ""), "CHARGING")
 
-        entity = {
-            "status": "C",
-        }
+# entity = {
+# "status": "C",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "CHARGING")
+# self.assertEqual(item.entity.get("status", ""), "CHARGING")
 
-        entity = {
-            "status": "c",
-        }
+# entity = {
+# "status": "c",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "CHARGING")
+# self.assertEqual(item.entity.get("status", ""), "CHARGING")
 
-        entity = {
-            "status": "LAUNCHED",
-        }
+# entity = {
+# "status": "LAUNCHED",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
+# self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
 
-        entity = {
-            "status": "launched",
-        }
+# entity = {
+# "status": "launched",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
+# self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
 
-        entity = {
-            "status": "L",
-        }
+# entity = {
+# "status": "L",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
+# self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
 
-        entity = {
-            "status": "l",
-        }
+# entity = {
+# "status": "l",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
+# self.assertEqual(item.entity.get("status", ""), "LAUNCHED")
 
-        entity = {
-            "status": "REPAIRING",
-        }
+# entity = {
+# "status": "REPAIRING",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "REPAIRING")
+# self.assertEqual(item.entity.get("status", ""), "REPAIRING")
 
-        entity = {
-            "status": "repairing",
-        }
+# entity = {
+# "status": "repairing",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "REPAIRING")
+# self.assertEqual(item.entity.get("status", ""), "REPAIRING")
 
-        entity = {
-            "status": "R",
-        }
+# entity = {
+# "status": "R",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "REPAIRING")
+# self.assertEqual(item.entity.get("status", ""), "REPAIRING")
 
-        entity = {
-            "status": "r",
-        }
+# entity = {
+# "status": "r",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "REPAIRING")
+# self.assertEqual(item.entity.get("status", ""), "REPAIRING")
 
-        entity = {
-            "status": "PORTFOLIO",
-        }
+# entity = {
+# "status": "PORTFOLIO",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
+# self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
 
-        entity = {
-            "status": "portfolio",
-        }
+# entity = {
+# "status": "portfolio",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
+# self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
 
-        entity = {
-            "status": "P",
-        }
+# entity = {
+# "status": "P",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
+# self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
 
-        entity = {
-            "status": "p",
-        }
+# entity = {
+# "status": "p",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
+# self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
 
-        entity = {
-            "status": " p ",
-        }
+# entity = {
+# "status": " p ",
+# }
 
-        item = WatchListItem(entity, clean=True)
+# item = WatchListItem(entity, clean=True)
 
-        self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
+# self.assertEqual(item.entity.get("status", ""), "PORTFOLIO")
 
 ##############################################################################
 
@@ -1877,30 +1990,88 @@ class TestWatchListItem(unittest.TestCase):
 
 ##############################################################################
 
-    def teset_colorize(self):
+    def test_clean_values_succeed_portfolio(self):
+        entity = {
+            "portfolio": "TRUE",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "TRUE")
+
+        entity = {
+            "portfolio": "true",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "TRUE")
+
+        entity = {
+            "portfolio": "T",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "TRUE")
+
+        entity = {
+            "portfolio": "t",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "TRUE")
+
+        entity = {
+            "portfolio": "FALSE",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "FALSE")
+
+        entity = {
+            "portfolio": "false",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "FALSE")
+
+        entity = {
+            "portfolio": "F",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "FALSE")
+
+        entity = {
+            "portfolio": "f",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "FALSE")
+
+        entity = {
+            "portfolio": " f ",
+        }
+
+        item = WatchListItem(entity, clean=True)
+
+        self.assertEqual(item.entity.get("portfolio", ""), "FALSE")
+
+##############################################################################
+
+    def test_colorize(self):
 
         earnings_date_threshold = 7
 
         entity = {
             "symbol": "A",
-            "op": "LONG ",
-            "status": "REPAIRING",
-            "earnings": "21190110",
-            "price": "0",
-            "stop": "0",
-            "note": "HELLO",
-            "flag": " FALSE",
-            "action": " FALSE",
-        }
-
-        item = WatchListItem(entity, clean=True, colorize=True)
-
-        self.assertTupleEqual(item.color, item._color_general)
-
-        entity = {
-            "symbol": "A",
-            "op": "SHORT",
-            "status": "CHARGING",
+            "op": "LONG",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
@@ -1916,29 +2087,13 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG",
-            "status": "LAUNCHED",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
             "note": "HELLO",
             "flag": " FALSE",
             "action": " FALSE",
-        }
-
-        item = WatchListItem(entity, clean=True, colorize=True)
-
-        self.assertTupleEqual(item.color, item._color_general)
-
-        entity = {
-            "symbol": "A",
-            "op": "LONG",
-            "status": "PORTFOLIO",
-            "earnings": "21190110",
-            "price": "0",
-            "stop": "0",
-            "note": "HELLO",
-            "flag": " FALSE",
-            "action": " FALSE",
+            "portfolio": "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -1948,7 +2103,6 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "REPAIRING",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
@@ -1964,7 +2118,6 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "REPAIRING",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
@@ -1980,7 +2133,6 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "REPAIRING",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
@@ -1996,13 +2148,13 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "PORTFOLIO",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
             "note": "HELLO",
             "flag": "TRUE",
             "action": " FLASE",
+            "portfolio": "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -2012,13 +2164,13 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "PORTFOLIO",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
             "note": "HELLO",
             "flag": "FALSE",
             "action": " TRUE",
+            "portfolio": "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -2028,13 +2180,13 @@ class TestWatchListItem(unittest.TestCase):
         entity = {
             "symbol": "A",
             "op": "LONG ",
-            "status": "PORTFOLIO",
             "earnings": "21190110",
             "price": "0",
             "stop": "0",
             "note": "HELLO",
             "flag": "TRUE",
             "action": " TRUE",
+            "portfolio": "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -2046,8 +2198,6 @@ class TestWatchListItem(unittest.TestCase):
             "A",
             "op":
             "LONG ",
-            "status":
-            "REPAIRING",
             "earnings":
             "{}".format(
                 int(datetime.datetime.now().strftime("%Y%m%d")) +
@@ -2073,8 +2223,6 @@ class TestWatchListItem(unittest.TestCase):
             "A",
             "op":
             "LONG ",
-            "status":
-            "CHARGING",
             "earnings":
             "{}".format(
                 int(datetime.datetime.now().strftime("%Y%m%d")) +
@@ -2089,6 +2237,8 @@ class TestWatchListItem(unittest.TestCase):
             "FALSE",
             "action":
             "FALSE",
+            "portfolio":
+            "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -2100,62 +2250,6 @@ class TestWatchListItem(unittest.TestCase):
             "A",
             "op":
             "LONG ",
-            "status":
-            "LAUNCHED",
-            "earnings":
-            "{}".format(
-                int(datetime.datetime.now().strftime("%Y%m%d")) +
-                earnings_date_threshold),
-            "price":
-            "0",
-            "stop":
-            "0",
-            "note":
-            "HELLO",
-            "flag":
-            "FALSE",
-            "action":
-            "FALSE",
-        }
-
-        item = WatchListItem(entity, clean=True, colorize=True)
-
-        self.assertTupleEqual(item.color, item._color_earnings)
-
-        entity = {
-            "symbol":
-            "A",
-            "op":
-            "LONG ",
-            "status":
-            "PORTFOLIO",
-            "earnings":
-            "{}".format(
-                int(datetime.datetime.now().strftime("%Y%m%d")) +
-                earnings_date_threshold),
-            "price":
-            "0",
-            "stop":
-            "0",
-            "note":
-            "HELLO",
-            "flag":
-            "FALSE",
-            "action":
-            "FALSE",
-        }
-
-        item = WatchListItem(entity, clean=True, colorize=True)
-
-        self.assertTupleEqual(item.color, item._color_earnings)
-
-        entity = {
-            "symbol":
-            "A",
-            "op":
-            "LONG ",
-            "status":
-            "PORTFOLIO",
             "earnings":
             "{}".format(
                 int(datetime.datetime.now().strftime("%Y%m%d")) +
@@ -2170,6 +2264,8 @@ class TestWatchListItem(unittest.TestCase):
             "TRUE",
             "action":
             "FALSE",
+            "portfolio":
+            "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -2181,8 +2277,6 @@ class TestWatchListItem(unittest.TestCase):
             "A",
             "op":
             "LONG ",
-            "status":
-            "PORTFOLIO",
             "earnings":
             "{}".format(
                 int(datetime.datetime.now().strftime("%Y%m%d")) +
@@ -2197,6 +2291,8 @@ class TestWatchListItem(unittest.TestCase):
             "FLASE",
             "action":
             "TRUE",
+            "portfolio":
+            "TRUE",
         }
 
         item = WatchListItem(entity, clean=True, colorize=True)
@@ -2208,8 +2304,6 @@ class TestWatchListItem(unittest.TestCase):
             "A",
             "op":
             "LONG ",
-            "status":
-            "PORTFOLIO",
             "earnings":
             "{}".format(
                 int(datetime.datetime.now().strftime("%Y%m%d")) +
@@ -2223,6 +2317,8 @@ class TestWatchListItem(unittest.TestCase):
             "flag":
             "TRUE",
             "action":
+            "TRUE",
+            "portfolio":
             "TRUE",
         }
 

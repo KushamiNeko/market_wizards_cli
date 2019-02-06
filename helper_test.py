@@ -19,7 +19,8 @@ class TestHelper(unittest.TestCase):
     def test_days_to_date_past(self):
         now = int(datetime.datetime.now().strftime("%Y%m%d")) - 1
         days = helper.days_to_date(now)
-        self.assertEqual(days, 0)
+        # self.assertEqual(days, 0)
+        self.assertEqual(days, -1)
 
     def test_hex_to_rgb_white(self):
         rgb = helper.hex_to_rgb("ffffff")

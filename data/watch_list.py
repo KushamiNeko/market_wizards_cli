@@ -13,12 +13,12 @@ class WatchListItem:
     _necessary_keys = [
         "symbol",
         "op",
-        "status",
+        # "status",
     ]
 
     _regex_symbol = r"^[A-Za-z]+$"
     _regex_op = r"^(?:long|short|l|s)$"
-    _regex_status = r"^(?:portfolio|repairing|charging|launched|p|r|c|l)$"
+    # _regex_status = r"^(?:portfolio|repairing|charging|launched|p|r|c|l)$"
 
     _regex_int = r"^[0-9]+$"
     _regex_float = r"^[0-9.]+$"
@@ -34,7 +34,7 @@ class WatchListItem:
     _regex_book = {
         "symbol": _regex_symbol,
         "op": _regex_op,
-        "status": _regex_status,
+        # "status": _regex_status,
         "earnings": _regex_date,
         "price": _regex_float_range,
         "stop": _regex_float_range,
@@ -47,11 +47,12 @@ class WatchListItem:
         "smr": _regex_ranks,
         "flag": _regex_bool,
         "action": _regex_bool,
+        "portfolio": _regex_bool,
     }
 
     _short_keys = {
         "sy": "symbol",
-        "st": "status",
+        # "st": "status",
         "o": "op",
         "e": "earnings",
         "p": "price",
@@ -59,6 +60,7 @@ class WatchListItem:
         "n": "note",
         "f": "flag",
         "a": "action",
+        "po": "portfolio",
     }
 
     _color_earnings = config.COLOR_WARNINGS
@@ -155,15 +157,15 @@ class WatchListItem:
                 elif value == "s":
                     value = "short"
 
-            if key == "status":
-                if value == "p":
-                    value = "portfolio"
-                if value == "r":
-                    value = "repairing"
-                if value == "c":
-                    value = "charging"
-                if value == "l":
-                    value = "launched"
+            # if key == "status":
+            # if value == "p":
+            # value = "portfolio"
+            # if value == "r":
+            # value = "repairing"
+            # if value == "c":
+            # value = "charging"
+            # if value == "l":
+            # value = "launched"
 
             if key == "price":
                 if re.match(self._regex_float, value,
@@ -190,13 +192,22 @@ class WatchListItem:
                 if value == "f":
                     value = "false"
 
+            if key == "portfolio":
+                if value == "t":
+                    value = "true"
+                if value == "f":
+                    value = "false"
+
             self.entity[key] = value.upper()
 
 ##############################################################################
 
     def _colorize(self) -> None:
 
-        if self.entity.get("status", "") == "PORTFOLIO":
+        # if self.entity.get("status", "") == "PORTFOLIO":
+        # self.color = self._color_portfolio
+
+        if str(self.entity.get("portfolio", "")) == "TRUE":
             self.color = self._color_portfolio
 
         if str(self.entity.get("flag", "")).upper() == "TRUE":
@@ -211,9 +222,9 @@ class WatchListItem:
 
             if match:
                 date = int(match.group(1))
+                days_to_date = helper.days_to_date(date)
 
-                if helper.days_to_date(
-                        date) < self._date_to_earnings_threshold:
+                if days_to_date < self._date_to_earnings_threshold:
                     self.color = self._color_earnings
 
 
