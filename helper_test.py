@@ -42,6 +42,13 @@ class TestHelper(unittest.TestCase):
         rgb = helper.hex_to_rgb("000000")
         self.assertTupleEqual(rgb, (0, 0, 0))
 
+    def test_random_string(self):
+        for _ in range(100):
+            rand_string_01 = helper.random_string()
+            rand_string_02 = helper.random_string()
+
+            self.assertNotEqual(rand_string_01, rand_string_02)
+
 
 ##############################################################################
 

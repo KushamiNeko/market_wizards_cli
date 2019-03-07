@@ -105,6 +105,18 @@ class WatchList():
 
 ##############################################################################
 
+    def _entity_earnings_reported(self, item: WatchListItem) -> None:
+        if item.earnings_reported:
+            symbol = item.entity.get("symbol", "")
+            item.entity["earnings"] = ""
+
+            if symbol != "":
+                self.context.database.replace_one(
+                    self._database, self.context.uid, {"symbol": symbol},
+                    item.entity)
+
+##############################################################################
+
     def _show_entities(self, entities: List) -> None:
 
         if len(entities) == 0:
@@ -137,6 +149,17 @@ class WatchList():
 
         for entity in entities:
             item = WatchListItem(entity, colorize=True)
+
+            self._entity_earnings_reported(item)
+
+            # if item.earnings_reported:
+            # symbol = item.entity.get("symbol", "")
+            # item.entity["earnings"] = ""
+
+            # if symbol != "":
+            # self.context.database.replace_one(
+            # self._database, self.context.uid, {"symbol": symbol},
+            # item.entity)
 
             helper.color_print(
                 item.color,

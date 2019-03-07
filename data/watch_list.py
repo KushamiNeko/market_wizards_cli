@@ -8,7 +8,7 @@ import config
 ##############################################################################
 
 
-class WatchListItem:
+class WatchListItem():
 
     _necessary_keys = [
         "symbol",
@@ -84,6 +84,7 @@ class WatchListItem:
 
         self.entity: Dict[str, str] = entity
         self.color = self._color_general
+        self.earnings_reported = False
 
         if clean:
             self._clean_keys()
@@ -223,6 +224,9 @@ class WatchListItem:
             if match:
                 date = int(match.group(1))
                 days_to_date = helper.days_to_date(date)
+
+                if days_to_date < 0:
+                    self.earnings_reported = True
 
                 if days_to_date < self._date_to_earnings_threshold:
                     self.color = self._color_earnings

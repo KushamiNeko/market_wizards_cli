@@ -1,6 +1,9 @@
 from typing import Tuple, Dict
 import datetime
 import readline
+import string
+import random
+import time
 
 ##############################################################################
 
@@ -75,6 +78,33 @@ def hex_to_rgb(hexstr: str) -> Tuple[int, int, int]:
     b = int(hexstr[4:6], 16)
 
     return (r, g, b)
+
+
+##############################################################################
+
+
+def random_string(length: int = 32,
+                  has_letter: bool = True,
+                  has_digits: bool = True,
+                  has_punctuation: bool = False) -> str:
+
+    random.seed(time.time())
+
+    src = ""
+    if has_letter:
+        src += string.ascii_letters
+    if has_digits:
+        src += string.digits
+    if has_punctuation:
+        src += string.punctuation
+
+    rand_str = ""
+
+    for _ in range(0, length):
+        index = random.randint(0, len(src) - 1)
+        rand_str += src[index]
+
+    return rand_str
 
 
 ##############################################################################

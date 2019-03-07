@@ -14,6 +14,8 @@ class Calculator():
     _actions = [
         "stop",
         "depth",
+        "retracement",
+        "pivot",
     ]
 
     def __init__(self, context: Context) -> None:
