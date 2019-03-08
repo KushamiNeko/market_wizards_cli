@@ -4,6 +4,7 @@ import readline
 import string
 import random
 import time
+import re
 
 ##############################################################################
 
@@ -13,7 +14,7 @@ def color_print(rgb: Tuple[int, int, int], message: str) -> None:
     # message))
 
     print("\033[38;2;{};{};{}m{}\033[0m".format(rgb[0], rgb[1], rgb[2],
-                                                message))
+                                                message.upper()))
 
 
 ##############################################################################
@@ -28,28 +29,38 @@ def color_input(rgb: Tuple[int, int, int], message: str) -> str:
 
 
 def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict[str, str]:
-    values = color_input(rgb, message).strip()
-
-    pair = {}
-
-    if values == "":
+    user_input = color_input(rgb, message).strip()
+    if user_input == "":
         raise ValueError("EMPTY INPUT")
 
-    split = values.split(" ")
+    try:
+        pair = key_value_pair(user_input)
+        return pair
+    except ValueError as err:
+        raise err
 
-    if len(split) < 1:
-        raise ValueError("NO KEY VALUE PAIR")
 
-    for value in values.split(" "):
-        strings = value.split("=")
+##############################################################################
 
-        if len(strings) < 2:
-            raise ValueError("NO KEY VALUE PAIR: {}".format(" ".join(strings)))
 
-        key = strings[0].strip()
-        value = strings[1].strip()
+def key_value_pair(inputs: str) -> Dict[str, str]:
+    regex_pattern = r"([^;]*)=([^;]*)"
+    pair = {}
+
+    matches = re.finditer(regex_pattern, inputs, re.DOTALL)
+
+    for match in matches:
+        key = match.group(1).strip()
+        value = match.group(2).strip()
+
+        if key == "" or value == "":
+            raise ValueError("INVALID KEY VALUE PAIR: {}={}".format(
+                key, value))
 
         pair[key] = value
+
+    if not pair:
+        raise ValueError("EMPTY KEY VALUE PAIR")
 
     return pair
 

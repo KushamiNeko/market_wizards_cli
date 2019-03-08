@@ -119,7 +119,7 @@ class WatchList():
 
     def _show_entities(self, entities: List) -> None:
 
-        if len(entities) == 0:
+        if not entities:
             raise ValueError("No Entities Match The Queries")
 
         helper.color_print(
@@ -393,7 +393,7 @@ class WatchList():
 
     def _get_symbols(self, entities: List[Dict[str, str]]) -> List[str]:
 
-        if len(entities) == 0:
+        if not entities:
             raise ValueError("No Entities Match The Queries")
 
         symbols = []

@@ -2,6 +2,9 @@ from typing import Dict, List
 import helper
 from context import Context
 
+from data.transaction import FuturesTransaction, entity_to_futures_transaction
+from data.trade import FuturesTrade
+
 ##############################################################################
 
 
@@ -64,12 +67,53 @@ class Trading():
 ##############################################################################
 
     def trades(self) -> List[Dict[str, str]]:
-        pass
+        entities = self.find_transaction({})
+        transactions = [
+            entity_to_futures_transaction(entity) for entity in entities
+        ]
+
+        trades_entities = [
+            trade.entity for trade in self._process_trades(transactions)
+        ]
+        return trades_entities
+
+##############################################################################
+
+    def _process_trades(self, transactions: List[FuturesTransaction]
+                        ) -> List[FuturesTrade]:
+
+        sorted_transaction = sorted(transactions, key=lambda x: x.time_stamp)
+
+        trades = []
+        round_transactions = []
+        position = 0
+
+        for transaction in sorted_transaction:
+            action = int("{}{}".format(transaction.action,
+                                       transaction.quantity))
+
+            position += action
+            round_transactions.append(transaction)
+
+            if position == 0:
+                trade = FuturesTrade(round_transactions)
+                trades.append(trade)
+
+                round_transactions = []
+                continue
+
+        return trades
 
 ##############################################################################
 
     def statistic(self) -> Dict[str, str]:
-        pass
+        entities = self.find_transaction({})
+        transactions = [
+            entity_to_futures_transaction(entity) for entity in entities
+        ]
+
+        trades = self._process_trades(transactions)
+        return {}
 
 
 ##############################################################################

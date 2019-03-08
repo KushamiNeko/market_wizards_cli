@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from data.transaction import FuturesTransaction
 import helper
 import config
@@ -9,12 +9,15 @@ import config
 class FuturesTrade():
     def __init__(self, orders: List[FuturesTransaction]) -> None:
 
-        if len(orders) <= 0:
+        if not orders:
             raise ValueError("EMPTY TRANSACTION ORDERS")
 
         self.orders = sorted(orders, key=lambda o: o.time_stamp)
 
-        self.action = ""
+        self.action = self.orders[0].action
+        self.symbol = self.orders[0].symbol
+        self.open_date = self.orders[0].date
+        self.close_date = self.orders[-1].date
 
         self.average_cost = 0.0
         self.average_revenue = 0.0
@@ -46,9 +49,6 @@ class FuturesTrade():
                     raise ValueError(
                         "MISMATCH SYMBOL IN ORDERS: {}, {}".format(
                             symbol, order.symbol))
-
-            if self.action == "":
-                self.action = action
 
             if action == self.action:
                 open_quatity += order.quantity
@@ -85,6 +85,22 @@ class FuturesTrade():
             quantity += order.quantity
 
         return total_point / float(quantity)
+
+##############################################################################
+
+    @property
+    def entity(self) -> Dict[str, str]:
+        entity = {
+            "action": str(self.action),
+            "symbol": str(self.symbol),
+            "open_date": str(self.open_date),
+            "close_date": str(self.close_date),
+            "average_cost": str(self.average_cost),
+            "average_revenue": str(self.average_revenue),
+            "gl_point": str(self.gl_point),
+        }
+
+        return entity
 
 
 ##############################################################################

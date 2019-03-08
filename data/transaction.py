@@ -25,7 +25,7 @@ class FuturesTransaction():
                  time_stamp: float = 0) -> None:
 
         if index == "":
-            self.index = helper.random_string()
+            self.index = helper.random_string(length=16)
         else:
             self.index = index
 

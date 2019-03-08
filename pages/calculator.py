@@ -81,7 +81,7 @@ class Calculator():
                     color = config.COLOR_WARNINGS
 
                 helper.color_print(
-                    color, "Stop {0: >3}%: {1: >4,.2f} $".format(i, stops[i]))
+                    color, "STOP {0: >3}%: {1: >4,.2F} $".format(i, stops[i]))
 
         except ValueError as err:
             raise err
@@ -137,7 +137,7 @@ class Calculator():
             depth = self._process_depth(start, end)
 
             helper.color_print(config.COLOR_WHITE,
-                               "Depth : {0: >3,.2f} %".format(depth * 100.0))
+                               "DEPTH : {0: >3,.2F} %".format(depth * 100.0))
 
         except ValueError as err:
             raise err

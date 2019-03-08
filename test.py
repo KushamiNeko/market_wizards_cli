@@ -1,6 +1,18 @@
 # import pandas as pd
 import re
 
+_regex_pattern = r"([^;]+)=([^;]+)"
+
+test = "price;o=l"
+
+matches = re.finditer(_regex_pattern, test, re.DOTALL)
+
+for match in matches:
+    print(match.group(1))
+    print(match.group(2))
+
+exit(0)
+
 # path = "/home/neko/Downloads/SC.csv"
 
 # df = pd.read_csv(path)
