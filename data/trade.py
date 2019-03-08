@@ -1,6 +1,7 @@
 from typing import List
 from data.transaction import FuturesTransaction
 import helper
+import config
 
 ##############################################################################
 
@@ -8,7 +9,10 @@ import helper
 class FuturesTrade():
     def __init__(self, orders: List[FuturesTransaction]) -> None:
 
+        if len(orders) <= 0:
+            raise ValueError("empty transaction orders")
         self.orders = orders
+
         self.action = ""
 
         self.average_cost = 0.0
@@ -42,12 +46,10 @@ class FuturesTrade():
                         "mismatch symbol in orders: {}, {}".format(
                             symbol, order.symbol))
 
-            if action in ("long", "short"):
-                self.action = order.action.upper()
-                open_quatity += order.quantity
-                open_orders.append(order)
+            if action in ("long", "short", "increase"):
+                if action in ("long", "short"):
+                    self.action = order.action.upper()
 
-            elif action == "increase":
                 open_quatity += order.quantity
                 open_orders.append(order)
 
@@ -61,13 +63,17 @@ class FuturesTrade():
                 "open {} contracts, close {} contracts".format(
                     open_quatity, close_quantity))
 
-        self.average_cost = round(self._average_point(open_orders), 4)
-        self.average_revenue = round(self._average_point(close_orders), 4)
+        self.average_cost = round(
+            self._average_point(open_orders), config.DOLLAR_DECIMALS)
+        self.average_revenue = round(
+            self._average_point(close_orders), config.DOLLAR_DECIMALS)
 
         if self.action == "LONG":
-            self.gl_point = round(self.average_revenue - self.average_cost, 4)
+            self.gl_point = round(self.average_revenue - self.average_cost,
+                                  config.DOLLAR_DECIMALS)
         else:
-            self.gl_point = round(self.average_cost - self.average_revenue, 4)
+            self.gl_point = round(self.average_cost - self.average_revenue,
+                                  config.DOLLAR_DECIMALS)
 
 ##############################################################################
 
@@ -80,7 +86,5 @@ class FuturesTrade():
 
         return total_point / float(quantity)
 
-
-##############################################################################
 
 ##############################################################################

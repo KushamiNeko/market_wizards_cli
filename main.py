@@ -1,6 +1,5 @@
 import base64
 import getpass
-from typing import Callable, Any
 
 import bcrypt
 import helper
@@ -11,6 +10,59 @@ from pages.watch_list import WatchList
 from pages.calculator import Calculator
 from pages.scan_organizer import ScanOrganizer
 from pages.pages import Pages
+
+##############################################################################
+
+
+class EntryPage():
+
+    _actions = [
+        "calculator",
+        "paper trading",
+        "live trading",
+        # "scan organize",
+        # "watch list",
+    ]
+
+    def __init__(self, context: Context) -> None:
+        self.context = context
+
+        self._page = Pages(self._actions, is_top_page=True)
+
+        self._handlers = {
+            "calculator": self._command_calculator,
+        }
+
+##############################################################################
+
+    def main_loop(self) -> None:
+        self._page.main_loop(self._process_command)
+
+##############################################################################
+
+    def _process_command(self, command: str) -> None:
+        handler = self._handlers.get(command, None)
+        if handler:
+            handler()
+
+##############################################################################
+
+    def _command_calculator(self) -> None:
+        calculator = Calculator(self.context)
+        calculator.main_loop()
+
+##############################################################################
+
+    def _command_scan_organize(self) -> None:
+        scan_split = ScanOrganizer(self.context)
+        scan_split.main_loop()
+
+##############################################################################
+
+    def _command_watch_list(self) -> None:
+        watchlist = WatchList(self.context)
+        watchlist.main_loop()
+
 
 ##############################################################################
 
@@ -35,48 +87,7 @@ def login(database: MongoInterface, email: str, password: bytes) -> str:
 ##############################################################################
 
 
-def _main_loop(context: Context) -> None:
-
-    PAGES = [
-        "scan organize",
-        "calculator",
-        "watch list",
-        "trades",
-        "new trade",
-        "statistic",
-        "exit",
-    ]
-
-    while True:
-        page = helper.color_input(
-            config.COLOR_PAGES,
-            "Where Do you want to go?\n({}) ".format(" ".join(
-                map(lambda x: "'{}'".format(x), PAGES))))
-
-        if page not in PAGES:
-            helper.color_print(config.COLOR_WARNINGS, "Unknown Page")
-            continue
-
-        if page == "exit":
-            break
-
-        if page == "scan organize":
-            scan_split = ScanOrganizer(context)
-            scan_split.main_loop()
-
-        if page == "calculator":
-            calculator = Calculator(context)
-            calculator.main_loop()
-
-        if page == "watch list":
-            watchlist = WatchList(context)
-            watchlist.main_loop()
-
-
-##############################################################################
-
-if __name__ == "__main__":
-
+def main() -> None:
     MONGO = MongoInterface()
     UID = ""
 
@@ -96,11 +107,18 @@ if __name__ == "__main__":
 
         CONTEXT.set_uid(UID)
 
-        _main_loop(CONTEXT)
+        entry_page = EntryPage(CONTEXT)
+        entry_page.main_loop()
 
         helper.color_print(config.COLOR_INFO,
                            "Thank you for using Market Wizards!!!")
     except Exception as err:
         helper.color_print(config.COLOR_WARNINGS, str(err))
+
+
+##############################################################################
+
+if __name__ == "__main__":
+    main()
 
 ##############################################################################

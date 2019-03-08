@@ -14,3 +14,7 @@ COLOR_WARNINGS = helper.hex_to_rgb(TerminalColors.paper_red_400)
 COLOR_WHITE = helper.hex_to_rgb(TerminalColors.paper_grey_300)
 
 ##############################################################################
+
+DOLLAR_DECIMALS = 4
+
+##############################################################################

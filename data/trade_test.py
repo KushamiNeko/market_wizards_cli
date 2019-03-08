@@ -2,6 +2,7 @@ import unittest
 
 from data.trade import FuturesTrade
 from data.transaction import FuturesTransaction
+import config
 
 ##############################################################################
 
@@ -10,6 +11,13 @@ class TestFuturesTrade(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         pass
+
+##############################################################################
+
+    def test_empty_orders(self):
+        orders = []
+        with self.assertRaises(ValueError):
+            FuturesTrade(orders)
 
 ##############################################################################
 
@@ -53,9 +61,11 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "LONG")
-        self.assertEqual(trade.average_cost, 2732.375)
-        self.assertEqual(trade.average_revenue, 2776.625)
-        self.assertEqual(trade.gl_point, 44.25)
+        self.assertEqual(trade.average_cost,
+                         round(2732.375, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(2776.625, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(44.25, config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -99,9 +109,12 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "LONG")
-        self.assertEqual(trade.average_cost, 2735.5833)
-        self.assertEqual(trade.average_revenue, 2776.75)
-        self.assertEqual(trade.gl_point, 41.1667)
+        self.assertEqual(trade.average_cost,
+                         round(2735.5833, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(2776.75, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(41.1667,
+                                               config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -145,9 +158,11 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "LONG")
-        self.assertEqual(trade.average_cost, 2732.375)
-        self.assertEqual(trade.average_revenue, 2723.75)
-        self.assertEqual(trade.gl_point, -8.625)
+        self.assertEqual(trade.average_cost,
+                         round(2732.375, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(2723.75, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(-8.625, config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -191,9 +206,12 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "LONG")
-        self.assertEqual(trade.average_cost, 2735.5833)
-        self.assertEqual(trade.average_revenue, 2723.1667)
-        self.assertEqual(trade.gl_point, -12.4166)
+        self.assertEqual(trade.average_cost,
+                         round(2735.5833, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(2723.1667, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(-12.4166,
+                                               config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -237,9 +255,11 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "SHORT")
-        self.assertEqual(trade.average_cost, 73.725)
-        self.assertEqual(trade.average_revenue, 50.17)
-        self.assertEqual(trade.gl_point, 23.555)
+        self.assertEqual(trade.average_cost,
+                         round(73.725, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(50.17, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(23.555, config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -283,9 +303,12 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "SHORT")
-        self.assertEqual(trade.average_cost, 73.5)
-        self.assertEqual(trade.average_revenue, 48.9567)
-        self.assertEqual(trade.gl_point, 24.5433)
+        self.assertEqual(trade.average_cost, round(73.5,
+                                                   config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(48.9567, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(24.5433,
+                                               config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -321,9 +344,11 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "SHORT")
-        self.assertEqual(trade.average_cost, 73.725)
-        self.assertEqual(trade.average_revenue, 74.1)
-        self.assertEqual(trade.gl_point, -0.375)
+        self.assertEqual(trade.average_cost,
+                         round(73.725, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(74.1, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(-0.375, config.DOLLAR_DECIMALS))
 
 ##############################################################################
 
@@ -359,9 +384,11 @@ class TestFuturesTrade(unittest.TestCase):
         trade = FuturesTrade(orders)
 
         self.assertEqual(trade.action, "SHORT")
-        self.assertEqual(trade.average_cost, 73.95)
-        self.assertEqual(trade.average_revenue, 74.1)
-        self.assertEqual(trade.gl_point, -0.15)
+        self.assertEqual(trade.average_cost,
+                         round(73.95, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.average_revenue,
+                         round(74.1, config.DOLLAR_DECIMALS))
+        self.assertEqual(trade.gl_point, round(-0.15, config.DOLLAR_DECIMALS))
 
 ##############################################################################
 

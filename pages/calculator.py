@@ -3,6 +3,7 @@ import helper
 from pages.pages import Pages
 from context import Context
 from data.watch_list import WatchListItem
+from data.cleaner import Cleaner
 import re
 import config
 
@@ -44,25 +45,33 @@ class Calculator():
 
     def _command_stop(self) -> None:
         try:
-            q = helper.key_value_input(config.COLOR_INFO,
-                                       "What are the PRICE and OP ? ")
-        except ValueError as err:
-            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
-            return
+            raw_inputs = helper.key_value_input(config.COLOR_INFO,
+                                                "What is the PRICE and OP ? ")
 
-        query = WatchListItem(q, clean=True, check_values=True)
+            cleaner = Cleaner(
+                key_abbreviation={
+                    "p": "price",
+                    "o": "op",
+                },
+                value_abbreviation={
+                    "op": {
+                        "l": "LONG",
+                        "s": "SHORT",
+                    },
+                },
+                necessary_keys=[
+                    "price",
+                    "op",
+                ],
+                regex_book={
+                    "price": r"^[0-9.]+$",
+                    "op": r"^(?:long|short|l|s)$",
+                })
 
-        if "price" not in query.entity:
-            helper.color_print(config.COLOR_WARNINGS, "No price value")
-            return
-        if "op" not in query.entity:
-            helper.color_print(config.COLOR_WARNINGS, "No op value")
-            return
+            clean_inputs = cleaner.clean(raw_inputs)
 
-        price = float(query.entity.get("price", 0))
-        op = query.entity.get("op", "")
-
-        try:
+            price = float(clean_inputs.get("price", 0))
+            op = clean_inputs.get("op", "").upper()
 
             stops = self._process_stop(price, op)
 
@@ -75,15 +84,14 @@ class Calculator():
                     color, "Stop {0: >3}%: {1: >4,.2f} $".format(i, stops[i]))
 
         except ValueError as err:
-            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
-            return
+            raise err
 
 ##############################################################################
 
     def _process_stop(self, price: float, op: str) -> Dict[int, float]:
 
         if price <= 0:
-            raise ValueError("Price should be greater than 0")
+            raise ValueError("PRICE SHOULD BE GREATER THAN 0")
 
         stops = {}
 
@@ -95,7 +103,7 @@ class Calculator():
             elif op == "SHORT":
                 stops[i] = price * (1.0 - percent)
             else:
-                raise ValueError("Invalid OP")
+                raise ValueError("INVALID OP")
 
         return stops
 
@@ -103,45 +111,45 @@ class Calculator():
 
     def _command_depth(self) -> None:
         try:
-            q = helper.key_value_input(
+            raw_inputs = helper.key_value_input(
                 config.COLOR_INFO,
-                "Please enter the start price and the end price...")
-        except ValueError as err:
-            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
-            return
+                "Please enter the START PRICE and the END PRICE...")
 
-        if "start" not in q and "s" not in q:
-            helper.color_print(config.COLOR_WARNINGS, "No start price")
-        elif "end" not in q and "e" not in q:
-            helper.color_print(config.COLOR_WARNINGS, "No end price")
+            cleaner = Cleaner(
+                key_abbreviation={
+                    "s": "start",
+                    "e": "end",
+                },
+                necessary_keys=[
+                    "start",
+                    "end",
+                ],
+                regex_book={
+                    "start": r"^[0-9.]+$",
+                    "end": r"^[0-9.]+$",
+                })
 
-        start = q.get("start", q.get("s", ""))
-        end = q.get("end", q.get("e", ""))
+            clean_inputs = cleaner.clean(raw_inputs)
 
-        if not re.match(r"[0-9.]+", start) or not re.match(r"[0-9.]+", end):
-            helper.color_print(config.COLOR_WARNINGS, "invalid price")
-            return
+            start = float(clean_inputs.get("start", ""))
+            end = float(clean_inputs.get("end", ""))
 
-        start_price = float(start)
-        end_price = float(end)
-
-        try:
-            depth = self._process_depth(start_price, end_price)
+            depth = self._process_depth(start, end)
 
             helper.color_print(config.COLOR_WHITE,
                                "Depth : {0: >3,.2f} %".format(depth * 100.0))
+
         except ValueError as err:
-            helper.color_print(config.COLOR_WARNINGS, "ERROR: {}".format(err))
-            return
+            raise err
 
 ##############################################################################
 
     def _process_depth(self, start: float, end: float) -> float:
         if start <= 0:
-            raise ValueError("Start Price should be greater than 0")
+            raise ValueError("START PRICE SHOULD BE GREATER THAN 0")
 
         if end <= 0:
-            raise ValueError("End Price should be greater than 0")
+            raise ValueError("END PRICE SHOULD BE GREATER THAN 0")
 
         return (end - start) / start
 

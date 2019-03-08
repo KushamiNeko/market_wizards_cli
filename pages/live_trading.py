@@ -7,7 +7,7 @@ import config
 ##############################################################################
 
 
-class Simulator():
+class LiveTrading():
 
     _actions = [
         "add",

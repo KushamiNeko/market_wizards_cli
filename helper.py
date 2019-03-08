@@ -33,18 +33,18 @@ def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict[str, str]:
     pair = {}
 
     if values == "":
-        raise ValueError("empty input")
+        raise ValueError("EMPTY INPUT")
 
     split = values.split(" ")
 
     if len(split) < 1:
-        raise ValueError("no key value pair")
+        raise ValueError("NO KEY VALUE PAIR")
 
     for value in values.split(" "):
         strings = value.split("=")
 
         if len(strings) < 2:
-            raise ValueError("no key value pair: {}".format(strings))
+            raise ValueError("NO KEY VALUE PAIR: {}".format(strings).upper())
 
         key = strings[0].strip()
         value = strings[1].strip()
