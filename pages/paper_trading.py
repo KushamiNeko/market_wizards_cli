@@ -14,8 +14,9 @@ class PaperTrading():
         "edit",
         "delete",
         "find",
-        "trade",
+        "trades",
         "statistic",
+        "save statistic",
     ]
 
     def __init__(self, context: Context) -> None:

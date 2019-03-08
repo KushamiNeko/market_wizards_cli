@@ -36,7 +36,7 @@ class Pages():
                 self.process_command(command)
                 handler(command)
             except ValueError as err:
-                helper.color_print(config.COLOR_WARNINGS, str(err))
+                helper.color_print(config.COLOR_WARNINGS, str(err).upper())
                 continue
 
             if self.change:
@@ -68,7 +68,7 @@ class Pages():
                 else:
                     raise ValueError(
                         "UNCLEAR COMMAND WITH MULTIPLE ACTIONS: {}".format(
-                            [action, clean]).upper())
+                            [action, clean]))
 
         if clean != "":
             return clean

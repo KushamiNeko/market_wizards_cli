@@ -44,7 +44,7 @@ def key_value_input(rgb: Tuple[int, int, int], message: str) -> Dict[str, str]:
         strings = value.split("=")
 
         if len(strings) < 2:
-            raise ValueError("NO KEY VALUE PAIR: {}".format(strings).upper())
+            raise ValueError("NO KEY VALUE PAIR: {}".format(" ".join(strings)))
 
         key = strings[0].strip()
         value = strings[1].strip()

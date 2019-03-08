@@ -27,7 +27,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -35,7 +35,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="ES",
-                action="increase",
+                action="+",
                 quantity=1,
                 point=2742.00,
                 note="break out",
@@ -43,7 +43,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="ES",
-                action="DECREASE",
+                action="-",
                 quantity=1,
                 point=2776.25,
                 note="losing strength",
@@ -51,7 +51,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=1,
                 point=2777.00,
                 note="break down",
@@ -60,7 +60,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "LONG")
+        self.assertEqual(trade.action, "+")
         self.assertEqual(trade.average_cost,
                          round(2732.375, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -75,7 +75,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -83,7 +83,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="ES",
-                action="increase",
+                action="+",
                 quantity=2,
                 point=2742.00,
                 note="break out",
@@ -91,7 +91,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="ES",
-                action="DECREASE",
+                action="-",
                 quantity=1,
                 point=2776.25,
                 note="losing strength",
@@ -99,7 +99,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=2,
                 point=2777.00,
                 note="break down",
@@ -108,7 +108,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "LONG")
+        self.assertEqual(trade.action, "+")
         self.assertEqual(trade.average_cost,
                          round(2735.5833, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -124,7 +124,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -132,7 +132,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="ES",
-                action="increase",
+                action="+",
                 quantity=1,
                 point=2742.00,
                 note="break out",
@@ -140,7 +140,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="ES",
-                action="DECREASE",
+                action="-",
                 quantity=1,
                 point=2725.5,
                 note="losing strength",
@@ -148,7 +148,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=1,
                 point=2722.00,
                 note="break down",
@@ -157,7 +157,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "LONG")
+        self.assertEqual(trade.action, "+")
         self.assertEqual(trade.average_cost,
                          round(2732.375, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -172,7 +172,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -180,7 +180,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="ES",
-                action="increase",
+                action="+",
                 quantity=2,
                 point=2742.00,
                 note="break out",
@@ -188,7 +188,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="ES",
-                action="DECREASE",
+                action="-",
                 quantity=1,
                 point=2725.5,
                 note="losing strength",
@@ -196,7 +196,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=2,
                 point=2722.00,
                 note="break down",
@@ -205,7 +205,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "LONG")
+        self.assertEqual(trade.action, "+")
         self.assertEqual(trade.average_cost,
                          round(2735.5833, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -221,7 +221,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="CL",
-                action="SHORT",
+                action="-",
                 quantity=1,
                 point=74.4,
                 note="bounced off 5SMA on the short side",
@@ -229,7 +229,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="CL",
-                action="increase",
+                action="-",
                 quantity=1,
                 point=73.05,
                 note="break down",
@@ -237,7 +237,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="CL",
-                action="DECREASE",
+                action="+",
                 quantity=1,
                 point=53.81,
                 note="gap up",
@@ -245,7 +245,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="CL",
-                action="CLOSE",
+                action="+",
                 quantity=1,
                 point=46.53,
                 note="bounced sharply",
@@ -254,7 +254,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "SHORT")
+        self.assertEqual(trade.action, "-")
         self.assertEqual(trade.average_cost,
                          round(73.725, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -269,7 +269,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="CL",
-                action="SHORT",
+                action="-",
                 quantity=1,
                 point=74.4,
                 note="bounced off 5SMA on the short side",
@@ -277,7 +277,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="CL",
-                action="increase",
+                action="-",
                 quantity=2,
                 point=73.05,
                 note="break down",
@@ -285,7 +285,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="CL",
-                action="DECREASE",
+                action="+",
                 quantity=1,
                 point=53.81,
                 note="gap up",
@@ -293,7 +293,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="CL",
-                action="CLOSE",
+                action="+",
                 quantity=2,
                 point=46.53,
                 note="bounced sharply",
@@ -302,7 +302,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "SHORT")
+        self.assertEqual(trade.action, "-")
         self.assertEqual(trade.average_cost, round(73.5,
                                                    config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -318,7 +318,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="CL",
-                action="SHORT",
+                action="-",
                 quantity=1,
                 point=74.4,
                 note="bounced off 5SMA on the short side",
@@ -326,7 +326,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="CL",
-                action="increase",
+                action="-",
                 quantity=1,
                 point=73.05,
                 note="break down",
@@ -334,7 +334,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="CL",
-                action="CLOSE",
+                action="+",
                 quantity=2,
                 point=74.1,
                 note="bounced sharply",
@@ -343,7 +343,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "SHORT")
+        self.assertEqual(trade.action, "-")
         self.assertEqual(trade.average_cost,
                          round(73.725, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -358,7 +358,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="CL",
-                action="SHORT",
+                action="-",
                 quantity=2,
                 point=74.4,
                 note="bounced off 5SMA on the short side",
@@ -366,7 +366,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="CL",
-                action="increase",
+                action="-",
                 quantity=1,
                 point=73.05,
                 note="break down",
@@ -374,7 +374,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="CL",
-                action="CLOSE",
+                action="+",
                 quantity=3,
                 point=74.1,
                 note="bounced sharply",
@@ -383,7 +383,7 @@ class TestFuturesTrade(unittest.TestCase):
 
         trade = FuturesTrade(orders)
 
-        self.assertEqual(trade.action, "SHORT")
+        self.assertEqual(trade.action, "-")
         self.assertEqual(trade.average_cost,
                          round(73.95, config.DOLLAR_DECIMALS))
         self.assertEqual(trade.average_revenue,
@@ -398,7 +398,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -406,7 +406,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="ES",
-                action="DECREASE",
+                action="-",
                 quantity=1,
                 point=2776.25,
                 note="losing strength",
@@ -414,7 +414,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=1,
                 point=2777.00,
                 note="break down",
@@ -432,7 +432,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -440,7 +440,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="ES",
-                action="increase",
+                action="+",
                 quantity=1,
                 point=2742.00,
                 note="break out",
@@ -448,7 +448,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=1,
                 point=2777.00,
                 note="break down",
@@ -466,7 +466,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="GC",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -474,7 +474,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190315,
                 symbol="ES",
-                action="DECREASE",
+                action="-",
                 quantity=1,
                 point=2776.25,
                 note="losing strength",
@@ -482,7 +482,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="ES",
-                action="CLOSE",
+                action="-",
                 quantity=1,
                 point=2777.00,
                 note="break down",
@@ -500,7 +500,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190308,
                 symbol="ES",
-                action="LONG",
+                action="+",
                 quantity=1,
                 point=2722.75,
                 note="5SMA bounced off 20SMA",
@@ -508,7 +508,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190309,
                 symbol="ES",
-                action="increase",
+                action="+",
                 quantity=1,
                 point=2742.00,
                 note="break out",
@@ -516,7 +516,7 @@ class TestFuturesTrade(unittest.TestCase):
             FuturesTransaction(
                 date=20190318,
                 symbol="SI",
-                action="CLOSE",
+                action="-",
                 quantity=1,
                 point=2777.00,
                 note="break down",

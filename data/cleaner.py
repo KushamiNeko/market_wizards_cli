@@ -72,7 +72,7 @@ class Cleaner():
 
         for key in self._necessary_keys:
             if key not in entity:
-                raise ValueError("NO NECESSARY KEY: {}".format(key).upper())
+                raise ValueError("NO NECESSARY KEY: {}".format(key))
 
 ##############################################################################
 
@@ -90,7 +90,7 @@ class Cleaner():
 
             if not re.match(regex, value, re.DOTALL):
                 raise ValueError("INVALID KEY VALUE PAIR: {}={}".format(
-                    key, value).upper())
+                    key, value))
 
 
 ##############################################################################

@@ -10,8 +10,9 @@ class FuturesTrade():
     def __init__(self, orders: List[FuturesTransaction]) -> None:
 
         if len(orders) <= 0:
-            raise ValueError("empty transaction orders")
-        self.orders = orders
+            raise ValueError("EMPTY TRANSACTION ORDERS")
+
+        self.orders = sorted(orders, key=lambda o: o.time_stamp)
 
         self.action = ""
 
@@ -36,31 +37,30 @@ class FuturesTrade():
         symbol = ""
 
         for order in self.orders:
-            action = order.action.lower()
+            action = order.action
 
             if symbol == "":
                 symbol = order.symbol
             else:
                 if symbol != order.symbol:
                     raise ValueError(
-                        "mismatch symbol in orders: {}, {}".format(
+                        "MISMATCH SYMBOL IN ORDERS: {}, {}".format(
                             symbol, order.symbol))
 
-            if action in ("long", "short", "increase"):
-                if action in ("long", "short"):
-                    self.action = order.action.upper()
+            if self.action == "":
+                self.action = action
 
+            if action == self.action:
                 open_quatity += order.quantity
                 open_orders.append(order)
-
-            elif action in ("close", "decrease"):
+            else:
                 close_quantity += order.quantity
                 close_orders.append(order)
 
         if open_quatity != close_quantity:
             raise ValueError(
-                "Number of Open and Close Contract doesn't match: " +
-                "open {} contracts, close {} contracts".format(
+                "NUMBER OF OPEN AND CLOSE CONTRACT DOESN'T MATCH: " +
+                "OPEN {} CONTRACTS, CLOSE {} CONTRACTS".format(
                     open_quatity, close_quantity))
 
         self.average_cost = round(
@@ -68,7 +68,7 @@ class FuturesTrade():
         self.average_revenue = round(
             self._average_point(close_orders), config.DOLLAR_DECIMALS)
 
-        if self.action == "LONG":
+        if self.action == "+":
             self.gl_point = round(self.average_revenue - self.average_cost,
                                   config.DOLLAR_DECIMALS)
         else:
